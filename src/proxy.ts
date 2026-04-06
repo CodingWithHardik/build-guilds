@@ -20,6 +20,13 @@ export async function proxy(request: NextRequest) {
       if (newCount === 1) {
         await redis.expire(`limit:${path}:${ip}`, 600);
       }
+    } else if (path.startsWith("/auth/")) {
+      const token = request.cookies.get("token")?.value;
+      if (token) {
+        const verify = verifyToken(token);
+        if ((verify as any).success)
+          return NextResponse.redirect(new URL("/", request.url));
+      }
     }
     return NextResponse.next();
   }
