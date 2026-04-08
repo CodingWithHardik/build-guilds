@@ -182,7 +182,7 @@ export default function Login() {
                         setOTP(value);
                       }}
                       required
-                      maxLength={10}
+                      maxLength={12}
                       className="bg-[#071d35]/10 text-white placeholder:text-gray-500 flex-1 min-w-0 border border-gray-600 rounded-md focus-visible:border-blue-500 focus-visible:ring-2 focus-visible:ring-blue-500 focus:ring-offset-0 focus:outline-none"
                     />
                   </div>
