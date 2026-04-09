@@ -4,11 +4,9 @@ import VerificationOTP from "../../../../../emails/otp";
 import nodemailer from "nodemailer";
 import { getEmailTransporter } from "../../../../../lib/mailer";
 import { getRedis } from "../../../../../lib/redis";
+import { NextRequest } from "next/server";
 
-export async function POST(
-  request: Request,
-  { params }: { params: { event: string } },
-) {
+export async function POST(request: NextRequest) {
   const { email } = await request.json();
 
   if (!email || typeof email !== "string")

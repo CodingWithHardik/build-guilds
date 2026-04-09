@@ -1,8 +1,9 @@
 import { getRedis } from "../../../../../lib/redis";
 import { generateToken } from "../../../../../lib/auth";
 import { cookies } from 'next/headers'
+import { NextRequest } from "next/server";
 
-export async function POST(request: Request, { params }: { params: { event: string } }) {
+export async function POST(request: NextRequest) {
     const { email, otp } = await request.json();
 
     if (!email || typeof email !== "string") return new Response(JSON.stringify({ error: "Email is required" }), { status: 200 });
