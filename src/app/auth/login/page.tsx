@@ -111,8 +111,8 @@ export default function Login() {
           hoverTrailAmount={0}
         />
       </div>
-      <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 text-white">
-        <Card className="inline-block h-fit bg-[#071d35] w-96">
+      <div className="container absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 text-white ">
+        <Card className="inline-block h-fit bg-[#071d35]">
           <CardHeader className="p-4 space-y-1">
             <div>
               <Image
@@ -132,7 +132,6 @@ export default function Login() {
               </CardDescription>
             </div>
           </CardHeader>
-
           <CardContent className="p-4 pt-0">
             <form onSubmit={onSubmit} id="login">
               <div className="flex flex-col gap-6">
