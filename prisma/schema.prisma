@@ -11,3 +11,108 @@ generator client {
 datasource db {
   provider = "postgresql"
 }
+
+model User {
+  id String @id @default(uuid())
+  name String
+  email String @unique
+  role UserRole
+  events EventUsers[]
+  cities CityUsers[]
+}
+
+enum UserRole {
+  SUPER_ADMIN
+  ADMIN
+  USER
+}
+
+model Event {
+  id String @id @default(uuid())
+  slug String @unique
+  eventName String
+  description String
+  startDate DateTime
+  endDate DateTime
+  users EventUsers[]
+  EventCities EventCities[]
+}
+
+model EventUsers {
+  id String @id @default(uuid())
+  eventId String
+  userId String
+  role EventUserRole?
+  event Event @relation(fields: [eventId], references: [id])
+  user User @relation(fields: [userId], references: [id])
+}
+
+enum EventUserRole {
+  LEADERSHIP
+  MAINTAINER
+  OBSERVER
+}
+
+model EventCities {
+  id String @id @default(uuid())
+  cityslug String @unique
+  eventId String
+  event Event @relation(fields: [eventId], references: [id])
+  CityUsers CityUsers[]
+  details Details?
+}
+
+model CityUsers {
+  id String @id @default(uuid())
+  cityslug String
+  userId String
+  role CityUserRole
+  user User @relation(fields: [userId], references: [id])
+  eventCities EventCities @relation(fields: [cityslug], references: [cityslug])
+}
+
+enum CityUserRole {
+  ORGANIZER
+  VOLUNTEER
+  MEMBERS
+}
+
+model Details {
+  id String @id @default(uuid())
+  slug String @unique
+  name String
+  date DateTime
+  location String
+  venue String
+  signuplink String
+  slackChannel String
+  domain Domain?
+  eventPlan EventPlan[]
+  eventSponsors EventSponsors[]
+  eventCities EventCities @relation(fields: [id], references: [id])
+}
+
+model Domain {
+  id String @id @default(uuid())
+  name String @unique
+  expiryDate DateTime
+  verificationToken String
+  verified Boolean @default(false)
+  details Details @relation(fields: [id], references: [id])
+}
+
+model EventPlan {
+  id String @id @default(uuid())
+  startTime DateTime
+  endTime DateTime
+  title String
+  description String
+  details Details? @relation(fields: [id], references: [id])
+}
+
+model EventSponsors {
+  id String @id @default(uuid())
+  lgoo String
+  name String
+  details Details? @relation(fields: [id], references: [id])
+}
