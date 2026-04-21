@@ -22,7 +22,8 @@ const footerLinks: FooterLink[][] = [
 ];
 export function Footer() {
   return (
-    <div className="px-7 md:px-10 bg-[#071d35]">
+    <div className="mx-auto w-full bg-[#071d35]">
+    <div className="container mx-auto px-6 md:px-14 max-w-7xl">
       <div className="flex flex-col py-10 md:flex-row md:items-center md:justify-between">
         <div className="flex flex-col items-start justify-start gap-y-5">
           <a href="#" className="flex items-center gap-x-2.5">
@@ -57,6 +58,7 @@ export function Footer() {
           </div>
         </div>
       </div>
+    </div>
     </div>
   );
 }
