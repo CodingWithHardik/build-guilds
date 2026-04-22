@@ -7,15 +7,15 @@ import { Button } from "@/components/ui/button";
 import Image from "next/image";
 
 const NAV_LINKS = [
-  { href: "/#home", label: "Home" },
-  { href: "/#about", label: "About" },
-  { href: "/#schedule", label: "Schedule" },
-  { href: "/#gallery", label: "Gallery" },
-  { href: "/#team", label: "Team" },
-  { href: "/#faq", label: "FAQ" },
+  { href: "#home", label: "Home" },
+  { href: "#about", label: "About" },
+  { href: "#schedule", label: "Schedule" },
+  { href: "#gallery", label: "Gallery" },
+  { href: "#team", label: "Team" },
+  { href: "#faq", label: "FAQ" },
 ];
 
-export default function Navbar() {
+export default function Navbar({ signUp }: { signUp: string }) {
   const [open, setOpen] = useState(false);
   const panelRef = useRef(null);
 
@@ -108,7 +108,7 @@ export default function Navbar() {
               </ul>
             </nav>
             <div className="flex items-center justify-end pr-32">
-              <Link href="https://example.com">
+              <Link href={signUp} aria-label="Sign Up">
                 <Button className="h-11 px-6 text-base bg-bp-warning-darker hover:bg-bp-warning font-bold rounded-none text-[#071d35] btn-grain">
                   <span>Sign Up</span>
                 </Button>
@@ -159,7 +159,7 @@ export default function Navbar() {
               <div className="mt-4 pt-2 flex justify-center w-full">
                 <Button className="h-11 px-6 text-base bg-bp-warning-darker hover:bg-bp-warning font-bold rounded-none text-[#071d35] btn-grain">
                   <Link
-                    href="https://example.com"
+                    href={signUp}
                     onClick={() => setOpen(false)}
                     aria-label="Sign Up"
                   >

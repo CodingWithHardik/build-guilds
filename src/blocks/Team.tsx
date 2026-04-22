@@ -1,24 +1,16 @@
 import Image from "next/image";
 import { FaSlack } from "react-icons/fa";
 
-export default function Team() {
-    const teamMembers = [
-        {
-            name: "Hardik Gupta",
-            role: "Head Organizer",
-            bio: "I am a developer",
-            imageUrl: "https://avatars.githubusercontent.com/u/113587014?v=4",
-            slackUrl: "https://hackclub.enterprise.slack.com/team/U07GXEVL48P"
-        },
-    ]
+export default function Team({ id, team }: { id: string, team: { name: string; role: string; bio: string; imageUrl: string; slackUrl: string }[] }) {
+
     return (
-        <div className="container mx-auto px-6 md:px-14 max-w-7xl py-14">
+        <div className="container mx-auto px-6 md:px-14 max-w-7xl py-14" id={id}>
             <h3 className="text-4xl mb:text-5xl lg:text-6xl  font-bold text-white uppercase font-rcfull px-4 text-center">
                 <span className="text-bp-warning">TEAM </span>BEHIND THE BUILD
             </h3>
                 <div className="flex flex-wrap justify-center gap-8 my-8 mx-8 lg:mx-0">
                     {
-                    teamMembers.map((member, index) => (
+                    team.map((member, index) => (
                         <div className="bg-[#071d35] border-[#2E4A6F] w-md md:w-[30%] lg:w-[22%] border-2 hover:border-bp-warning" key={index}>
                     <div
                         className="relative w-full aspect-square overflow-hidden"

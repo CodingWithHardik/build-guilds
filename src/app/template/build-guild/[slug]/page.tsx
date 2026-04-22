@@ -15,14 +15,61 @@ import { Faq } from "@/blocks/Faq";
 import { Badge } from "@/components/ui/badge";
 import { Calendar1Icon, CheckCircle2Icon, StarIcon } from "lucide-react";
 import { Footer } from "@/blocks/Footer";
+import { notFound } from "next/navigation"
+ 
+export default function CityPage({ params }: { params: Promise<{ slug: string }> }) {
+  const { slug } = React.use(params);
 
-const nunito = Nunito({ subsets: ["latin"], weight: ["700"] });
+  if (slug.toLowerCase() !== "preview") notFound();
 
-export default function CityPage() {
+  const data = {
+    signupLink: "https://blueprint.hackclub.com",
+    email: "",
+    city: "City",
+    country: "Country",
+    venue: "",
+    dateTime: "2026-04-26T03:00:00.000Z",
+    slackUrl: "",
+    timelineEvents: [
+      {
+        time: "11:00 AM - 11:30 AM",
+        title: "Check-in + Bench Setup",
+        description:
+          "Arrive at your local event space, check in with the organizers, and set up your workspace for the day.",
+      },
+    ],
+    sponsors: [
+      { 
+        name: "Hack Club",
+        logo: "https://assets.hackclub.com/icon-rounded.svg"
+      },
+    ],
+    team: [
+      {
+            name: "Hardik Gupta",
+            role: "Head Organizer",
+            bio: "I am a developer",
+            imageUrl: "https://avatars.githubusercontent.com/u/113587014?v=4",
+            slackUrl: "https://hackclub.enterprise.slack.com/team/U07GXEVL48P"
+        }
+    ],
+    faqs: [
+      {
+    question: "What is Hack Club?",
+    answer:
+      "Hack Club is a global nonprofit network of student-led coding clubs where teenagers learn programming by building real-world projects, collaborating with others, and developing practical tech skills.",
+  }
+    ]
+  };
+  const eventDate = new Date(data.dateTime);
+  const date = eventDate.getDate();
+  const month = eventDate.toLocaleString("default", { month: "long" });
+  const year = eventDate.getFullYear();
+
   return (
     <>
-      <Navbar />
-      <div className="text-center mt-4">
+      <Navbar signUp={data.signupLink} />
+      <div className="text-center mt-4" id="home">
         <Image
           src="https://raw.githubusercontent.com/CodingWithHardik/assets/refs/heads/main/build-guilds/logo_main.png"
           alt="Logo"
@@ -42,14 +89,14 @@ export default function CityPage() {
         >
           Build Guild
           <br />
-          <span className="text-bp-warning uppercase">Kanpur</span>
+          <span className="text-bp-warning uppercase">{data.city}</span>
         </h1>
         <p className="max-w-175 mx-auto text-base md:text-lg text-gray-200 pt-2 font-rcfull">
           The world's largest week of hardware meetups coming to your city. Join
           or start a guild, April 13 to 19th.
         </p>
         <Button className="mt-4 px-6 text-lg bg-bp-warning hover:bg-bp-warning-darkere font-bold rounded-none text-[#071d35] btn-grain">
-          <a href="https://example.com" aria-label="Sign Up">
+          <a href={data.signupLink} aria-label="Sign Up">
             Sign Up
           </a>
         </Button>
@@ -60,7 +107,7 @@ export default function CityPage() {
                 EVENT WINDOW
               </p>
               <h2 className="text-yellow-400 text-lg font-bold mt-1">
-                April 19
+                {month} {date}, {year}
               </h2>
             </div>
             <div className="p-4 border-b md:border-b-0 md:border-r border-[#2E4A6F] text-center">
@@ -68,7 +115,7 @@ export default function CityPage() {
                 LOCATION
               </p>
               <h2 className="text-white text-lg font-bold mt-1">
-                Kanpur, India
+                {data.city?.length > 0 ? `${data.city}, ` : null}{data.country}
               </h2>
             </div>
             <div className="p-4 text-center">
@@ -76,19 +123,19 @@ export default function CityPage() {
                 VENUE
               </p>
               <h2 className="text-white text-sm md:text-lg font-bold mt-1 leading-snug">
-                TBD
+                {data.venue || "TBD"}
               </h2>
             </div>
           </div>
         </div>
       </div>
-      <Timer />
-      <About />
-      <Timeline />
-      <Sponsors />
-      <BlueprintGallery />
-      <Team />
-      <Faq />
+      <Timer dateTime={data.dateTime} />
+      <About id="about" />
+      <Timeline id="schedule" timelineEvents={data.timelineEvents} />
+      <Sponsors id="sponsors" sponsors={data.sponsors} />
+      <BlueprintGallery id="gallery" />
+      <Team id="team" team={data.team} />
+      <Faq id="faq" faqs={data.faqs} />
       <div className="container mx-auto py-8 my-12 px-6 md:px-14 max-w-7xl">
         <div className="px-6 md:px-14 bg-[#071d35] py-6 md:py-8">
           <h4 className="text-4xl text-bp-warning font-rcfull font-bold">Ready to build something real?</h4>
@@ -115,19 +162,19 @@ export default function CityPage() {
         </p>
         <div className="mt-8 flex flex-wrap gap-4">
           <Button className="px-6 text-lg bg-bp-warning hover:bg-bp-warning-darkere font-bold rounded-none text-[#071d35] btn-grain">
-            <a href="https://example.com" aria-label="Sign Up">
+            <a href={data.signupLink} aria-label="Sign Up">
               Sign Up
             </a>
           </Button>
           <Button variant="outline" className="px-6 text-lg font-bold rounded-none text-gray-200 hover:bg-image-contrast/10">
-            <a href="https://example.com" aria-label="Learn More">
-              Learn More
+            <a href={data.slackUrl} aria-label="Slack">
+              Join Slack
             </a>
           </Button>
         </div>
         </div>
       </div>
-      <Footer />
+      <Footer registerUrl={data.signupLink} slackUrl={data.slackUrl} email={data.email} />
     </>
   );
 }

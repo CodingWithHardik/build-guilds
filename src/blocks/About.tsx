@@ -1,9 +1,9 @@
 "use client";
 
-export default function About() {
+export default function About({ id }: { id?: string }) {
   return (
     <>
-        <div className="relative overflow-hidden px-6 md:px-14 py-16 md:py-24 font-rcbasic">
+        <div className="relative overflow-hidden px-6 md:px-14 py-16 md:py-24 font-rcbasic" id={id}>
         <div className="relative grid grid-cols-1 md:grid-cols-2 gap-12 md:gap-20 items-start max-w-7xl mx-auto">
           <div className="pl-4 md:pl-18 pt-0 md:pt-2">
             <div className="mb-10 flex items-center gap-2">
@@ -38,7 +38,7 @@ export default function About() {
                 <div className="relative p-5 md:p-7 border-r border-white/90 border-b">
                     <span className="absolute top-4 right-4 h-1 w-1 rounded-full bg-bp-warning"/>
                     <p className="text-[28px] md:text-[38px] font-black leading-none tracking-[-0.04em] text-bp-warning">April 13</p>
-                    <p className="mt-2 text-[10px] font-semibold uppercase tracking-[0.14em] text-white">Kick-off date</p>
+                    <p className="mt-2 text-[10px] font-semibold uppercase tracking-[0.14em] text-white">Start Date</p>
                     <p className="mt-1 text-[12px] font-light leading-relaxed text-white/80">Running through April 26</p>
                 </div>
                 <div className="relative p-5 md:p-7 border-b border-white/90">

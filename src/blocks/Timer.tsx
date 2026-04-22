@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 
-export default function Timer() {
-  const DATE = new Date("2026-04-19T00:00:00Z").getTime();
+export default function Timer({ dateTime }: { dateTime: string }) {
+  const DATE = new Date(dateTime).getTime();
   const [timeleft, settimeleft] = useState(getTime());
   const [mounted, setMounted] = useState(false);
   function getTime() {

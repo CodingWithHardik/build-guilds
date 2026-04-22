@@ -2,10 +2,10 @@ import { cn } from "@/lib/utils";
 import Image from "next/image";
 import { useEffect, useRef, useState } from "react";
 
-export default function BlueprintGallery() {
+export default function BlueprintGallery({ id }: { id: string }) {
   const images = [
     {
-      url: "https://blueprint.f8d710a55cb9b516d88635f103c2c9f2.r2.cloudflarestorage.com/7h6l08cvpwgjuypdbvt9l793qcfs?response-content-disposition=inline%3B%20filename%3D%22added%20servo%20cover%20for%20wing%20v6.png%22%3B%20filename%2A%3DUTF-8%27%27added%2520servo%2520cover%2520for%2520wing%2520v6.png&response-content-type=image%2Fwebp&X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=b27cbf3ecad4135891e6187077206c69%2F20260412%2Fauto%2Fs3%2Faws4_request&X-Amz-Date=20260412T075100Z&X-Amz-Expires=604800&X-Amz-SignedHeaders=host&X-Amz-Signature=ab29306db46bf62a85073c1fa72afa45ad3025fc352ac8ae782862a8637cc0d0",
+      url: "https://github.com/CodingWithHardik/assets/blob/main/build-guilds/blueprint/gallery/1.png?raw=true",
       title: "X-26 GREYWOLF PT-1",
       projecturl: "https://blueprint.hackclub.com/projects/2458",
       author: "M.Abdullah",
@@ -14,7 +14,7 @@ export default function BlueprintGallery() {
         "This beast, A single engine powered, housing an 80mm EDF in its engine bay. 1.3 meters long, standing .3 meters high. Is the first Prototype of one of my wonderworks of single engine powered series of a highly agile Rc fighter jet, currently in prototyping state, its intended to house a Custom diy Radar that can track and lock on objects it considers hostile. And a telemetry system which can help locate aircraft's altitude, distance from the controller, its heading, and location for google maps, in mid-flight.",
     },
     {
-      url: "https://blueprint.f8d710a55cb9b516d88635f103c2c9f2.r2.cloudflarestorage.com/9quv74y4lviq1ltdyru5fmcncjvu?response-content-disposition=inline%3B%20filename%3D%22Cyberboard.jpg%22%3B%20filename%2A%3DUTF-8%27%27Cyberboard.jpg&response-content-type=image%2Fwebp&X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=b27cbf3ecad4135891e6187077206c69%2F20260412%2Fauto%2Fs3%2Faws4_request&X-Amz-Date=20260412T083817Z&X-Amz-Expires=604800&X-Amz-SignedHeaders=host&X-Amz-Signature=d352ac065cedccc26c774a8323349ba4deb2219329f1d371e4480286f9d26088",
+      url: "https://github.com/CodingWithHardik/assets/blob/main/build-guilds/blueprint/gallery/2.png?raw=true",
       title: "Cyberboard",
       projecturl: "https://blueprint.hackclub.com/projects/491",
       author: "NotARoomba",
@@ -23,7 +23,7 @@ export default function BlueprintGallery() {
         "A cyberpunk-themed STM32 development board featuring Bluetooth 5.1 connectivity and integrated Li-ion/LiPo battery charging support.",
     },
     {
-      url: "https://blueprint.f8d710a55cb9b516d88635f103c2c9f2.r2.cloudflarestorage.com/uwsoa4m094hdsi8o9g92br3kqyr2?response-content-disposition=inline%3B%20filename%3D%22image.png%22%3B%20filename%2A%3DUTF-8%27%27image.png&response-content-type=image%2Fwebp&X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=b27cbf3ecad4135891e6187077206c69%2F20260412%2Fauto%2Fs3%2Faws4_request&X-Amz-Date=20260412T083930Z&X-Amz-Expires=604800&X-Amz-SignedHeaders=host&X-Amz-Signature=d7d8dcda1433313c4ba77667c993a8df513ad5a10668d98a21408dd053ad059c",
+      url: "https://github.com/CodingWithHardik/assets/blob/main/build-guilds/blueprint/gallery/3.png?raw=true",
       title: "UDON | Rival Robotics",
       projecturl: "https://blueprint.hackclub.com/projects/1104",
       author: "a**30",
@@ -32,7 +32,7 @@ export default function BlueprintGallery() {
         "Shuttlecock intaking and shooting robot meant to compete in the Rival Robotics Competition.",
     },
     {
-      url: "https://blueprint.f8d710a55cb9b516d88635f103c2c9f2.r2.cloudflarestorage.com/qwajcoo2tdvkyc9uljq9mwog6f2t?response-content-disposition=inline%3B%20filename%3D%22FancyRender1.png%22%3B%20filename%2A%3DUTF-8%27%27FancyRender1.png&response-content-type=image%2Fwebp&X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=b27cbf3ecad4135891e6187077206c69%2F20260412%2Fauto%2Fs3%2Faws4_request&X-Amz-Date=20260412T075054Z&X-Amz-Expires=604800&X-Amz-SignedHeaders=host&X-Amz-Signature=5d38ac7a3ec641339dc3d4f5aee1d878328a5be330ebfb8a0e7fcbc2c900ab16",
+      url: "https://github.com/CodingWithHardik/assets/blob/main/build-guilds/blueprint/gallery/4.png?raw=true",
       title: "ES_01 E-ink Smartwatch",
       projecturl: "https://blueprint.hackclub.com/projects/4721",
       author: "sandgum",
@@ -41,7 +41,7 @@ export default function BlueprintGallery() {
         "A 5mm thick smartwatch which achieves its thinness by laying out each of its components in a straight line, in their own modules which can bend around each other to conform to the wearer's wrist. The watch features a main E-ink touch display that consumes very little power, accompanied by two small OLEDs at the top and bottom to show rapidly changing data (Like seconds, heart rate etc.). The watch incorporates an ESP32-S3 microcontroller for main processing and establishing a Bluetooth connection to a smartphone. It also incorporates heart rate sensing, an intelligent inertial measurement unit and a pressure/temperature sensor to provide rough fitness and altitude tracking as well.",
     },
     {
-      url: "https://blueprint.f8d710a55cb9b516d88635f103c2c9f2.r2.cloudflarestorage.com/vdg5bzzghdk8a5w1qbn8n385eu8v?response-content-disposition=inline%3B%20filename%3D%22screenshot_2025-06-22_184646_720.png%22%3B%20filename%2A%3DUTF-8%27%27screenshot_2025-06-22_184646_720.png&response-content-type=image%2Fwebp&X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=b27cbf3ecad4135891e6187077206c69%2F20260412%2Fauto%2Fs3%2Faws4_request&X-Amz-Date=20260412T075100Z&X-Amz-Expires=604800&X-Amz-SignedHeaders=host&X-Amz-Signature=7de4f61674b5ece6eebb05ccbff799b037b9c357ea8ab901b2ea0ec11aa88731",
+      url: "https://github.com/CodingWithHardik/assets/blob/main/build-guilds/blueprint/gallery/5.png?raw=true",
       title: "The G1 Mini Version 2",
       projecturl: "https://blueprint.hackclub.com/projects/117",
       author: "Ghost",
@@ -50,7 +50,7 @@ export default function BlueprintGallery() {
         "This is version two of the awesome 3d printer I designed for Highway. This new one is super stiff and is gonna be wicked fast. I actually have been developing this one for a while, so it is mostly done.",
     },
     {
-      url: "https://blueprint.f8d710a55cb9b516d88635f103c2c9f2.r2.cloudflarestorage.com/fqd4kv8ts6fnaa8cgfkkbp5fcu2y?response-content-disposition=inline%3B%20filename%3D%223f9d282f-023f-48bd-ba73-684587c5a4c4.png%22%3B%20filename%2A%3DUTF-8%27%273f9d282f-023f-48bd-ba73-684587c5a4c4.png&response-content-type=image%2Fwebp&X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=b27cbf3ecad4135891e6187077206c69%2F20260412%2Fauto%2Fs3%2Faws4_request&X-Amz-Date=20260412T075100Z&X-Amz-Expires=604800&X-Amz-SignedHeaders=host&X-Amz-Signature=2560aeb234243c07bd2d389a0ac5998e1ad71378a3c7a0fdc200d80e11a5c90e",
+      url: "https://github.com/CodingWithHardik/assets/blob/main/build-guilds/blueprint/gallery/6.png?raw=true",
       title: "High Voltage Power Supply",
       projecturl: "https://blueprint.hackclub.com/projects/17",
       author: "Sidd",
@@ -59,7 +59,7 @@ export default function BlueprintGallery() {
         "A high voltage power supply that aims to output around 250,000 volts. It utilizes an high frequency transformer fed into a multi-stage Cockroft-Walton multiplier. This array of high-voltage diodes and capacitors should be able to multiply it up to the hundreds of thousands of volts (hopefully).",
     },
     {
-      url: "https://blueprint.f8d710a55cb9b516d88635f103c2c9f2.r2.cloudflarestorage.com/yg3ixjhdqgd6vo4t8r4tm1m8mbfi?response-content-disposition=inline%3B%20filename%3D%22hahahfahhhh%25282%2529.jpg%22%3B%20filename%2A%3DUTF-8%27%27hahahfahhhh%25282%2529.jpg&response-content-type=image%2Fwebp&X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=b27cbf3ecad4135891e6187077206c69%2F20260412%2Fauto%2Fs3%2Faws4_request&X-Amz-Date=20260412T084138Z&X-Amz-Expires=604800&X-Amz-SignedHeaders=host&X-Amz-Signature=2c39d69de370cb10e58e9e60563d5f6bce59a616d26617cbd434ca2251e1ae33",
+      url: "https://github.com/CodingWithHardik/assets/blob/main/build-guilds/blueprint/gallery/7.png?raw=true",
       title: "OREO- ROBOT dog",
       projecturl: "https://blueprint.hackclub.com/projects/1690",
       author: "A.Adarsh",
@@ -68,7 +68,7 @@ export default function BlueprintGallery() {
         'OREO V2 is an advanced, open-source quadruped robot designed for high-performance mobility and real-time robotic research. While the original OREO was a great starting point, the V2 is a complete "ground-up" rebuild focusing on power, precision, and the industry-standard ROS 2 Humble framework.',
     },
     {
-      url: "https://blueprint.f8d710a55cb9b516d88635f103c2c9f2.r2.cloudflarestorage.com/vf30xwc26gaikvtp8fy5jfv6aktg?response-content-disposition=inline%3B%20filename%3D%22Screenshot%202025-10-21%20161754.png%22%3B%20filename%2A%3DUTF-8%27%27Screenshot%25202025-10-21%2520161754.png&response-content-type=image%2Fwebp&X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=b27cbf3ecad4135891e6187077206c69%2F20260412%2Fauto%2Fs3%2Faws4_request&X-Amz-Date=20260412T084138Z&X-Amz-Expires=604800&X-Amz-SignedHeaders=host&X-Amz-Signature=ddd753a56b80ea418d8baa3c9a8d66ca84ec9b32518b2405d838635d79818b85",
+      url: "https://github.com/CodingWithHardik/assets/blob/main/build-guilds/blueprint/gallery/8.png?raw=true",
       title: "Mini Drone",
       projecturl: "https://blueprint.hackclub.com/projects/851",
       author: "manan",
@@ -77,7 +77,7 @@ export default function BlueprintGallery() {
         "I'm building a drone from scratch using 3D-printed parts, 4 brushless motors, and a custom PCB. I’m researching components, flight controllers, and how to design the frame to make it light but strong.",
     },
     {
-      url: "https://blueprint.f8d710a55cb9b516d88635f103c2c9f2.r2.cloudflarestorage.com/jljwf0jqowxcf3pcy50u3ty6q32t?response-content-disposition=inline%3B%20filename%3D%22Screenshot%202026-01-28%20104225.png%22%3B%20filename%2A%3DUTF-8%27%27Screenshot%25202026-01-28%2520104225.png&response-content-type=image%2Fwebp&X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=b27cbf3ecad4135891e6187077206c69%2F20260412%2Fauto%2Fs3%2Faws4_request&X-Amz-Date=20260412T085253Z&X-Amz-Expires=604800&X-Amz-SignedHeaders=host&X-Amz-Signature=512c08b371a786ae350f6ccc3f2d64c959544fdc8c1488701e83dc1b8defcb36",
+      url: "https://github.com/CodingWithHardik/assets/blob/main/build-guilds/blueprint/gallery/9.png?raw=true",
       title: "5DOF Robotic Arm",
       projecturl: "https://blueprint.hackclub.com/projects/9334",
       author: "david1117constantine",
@@ -86,7 +86,7 @@ export default function BlueprintGallery() {
         "This is my very first full-scale engineering project since I built my own 3D printer, a VORON V0.2R1. The aim of this project is to get more comfortable modeling in Fusion 360 and using Stepper Motors with microcontrollers. Not only that, but the Arm is part of a larger research study I am conducting about the use of brain wave and polarity data and its use in controlling industrial and scientific robotic equipment and devices.",
     },
     {
-      url: "https://blueprint.f8d710a55cb9b516d88635f103c2c9f2.r2.cloudflarestorage.com/wigqriswr0ksrsy7mp9lqzngv8qv?response-content-disposition=inline%3B%20filename%3D%22Cuprite%20v28.png%22%3B%20filename%2A%3DUTF-8%27%27Cuprite%2520v28.png&response-content-type=image%2Fwebp&X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=b27cbf3ecad4135891e6187077206c69%2F20260412%2Fauto%2Fs3%2Faws4_request&X-Amz-Date=20260412T085610Z&X-Amz-Expires=604800&X-Amz-SignedHeaders=host&X-Amz-Signature=bcf4d7dbb355abcd40af7907ed036ba6cd7933bed8e19ca0bc545b797e0b42ae",
+      url: "https://github.com/CodingWithHardik/assets/blob/main/build-guilds/blueprint/gallery/10.png?raw=true",
       title: "Cuprite",
       projecturl: "https://blueprint.hackclub.com/projects/1254",
       author: "Renovic",
@@ -115,6 +115,7 @@ export default function BlueprintGallery() {
   }) {
     return (
       <div
+            id={id}
             onClick={() => window.open(project.projecturl, "_blank")}
             className={cn(
               `flex flex-col h-full overflow-visible bg-[#071d35] relative`,
