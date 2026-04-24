@@ -13,11 +13,6 @@ export async function POST(request: NextRequest) {
     return new Response(JSON.stringify({ error: "Email is required" }), {
       status: 400,
     });
-  if (!email.endsWith("@blueprint.hackclub.com"))
-    return new Response(
-      JSON.stringify({ error: "Email must be a blueprint email" }),
-      { status: 200 },
-    );
   const redis = getRedis();
   const current = Number((await redis.get(`limit:otp:${email}`)) ?? 0);
   if (current >= 10) {

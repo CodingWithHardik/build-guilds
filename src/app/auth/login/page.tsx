@@ -111,9 +111,9 @@ export default function Login() {
           hoverTrailAmount={0}
         />
       </div>
-      <div className="container absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 text-white ">
-        <Card className="inline-block h-fit bg-[#071d35]">
-          <CardHeader className="p-4 space-y-1">
+      <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 text-white w-full px-4">
+        <Card className="w-full sm:max-w-sm h-fit bg-[#071d35] mx-auto">
+          <CardHeader className="p-4 space-y-1"> 
             <div>
               <Image
                 src="https://github.com/CodingWithHardik/assets/blob/main/build-guilds/logo.png?raw=true"
@@ -143,17 +143,14 @@ export default function Login() {
                     <Input
                       id="email"
                       type="text"
-                      placeholder="city"
+                      placeholder="hardik@example.com"
                       onChange={(e) =>
-                        setEmail(`${e.target.value}@blueprint.hackclub.com`)
+                        setEmail(`${e.target.value}`)
                       }
                       required
                       maxLength={30}
                       className="bg-[#071d35]/10 text-white placeholder:text-gray-500 border-0 focus-visible:ring-0 focus:ring-offset-0 rounded-none flex-1 min-w-0"
                     />
-                    <span className="text-white px-3 py-2 text-xs whitespace-nowrap select-none">
-                      @blueprint.hackclub.com
-                    </span>
                   </div>
                 </div>
                 {isSecondStep && (

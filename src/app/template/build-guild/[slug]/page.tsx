@@ -15,9 +15,13 @@ import { Faq } from "@/blocks/Faq";
 import { Badge } from "@/components/ui/badge";
 import { Calendar1Icon, CheckCircle2Icon, StarIcon } from "lucide-react";
 import { Footer } from "@/blocks/Footer";
-import { notFound } from "next/navigation"
- 
-export default function CityPage({ params }: { params: Promise<{ slug: string }> }) {
+import { notFound } from "next/navigation";
+
+export default function CityPage({
+  params,
+}: {
+  params: Promise<{ slug: string }>;
+}) {
   const { slug } = React.use(params);
 
   if (slug.toLowerCase() !== "preview") notFound();
@@ -39,27 +43,27 @@ export default function CityPage({ params }: { params: Promise<{ slug: string }>
       },
     ],
     sponsors: [
-      { 
+      {
         name: "Hack Club",
-        logo: "https://assets.hackclub.com/icon-rounded.svg"
+        logo: "https://assets.hackclub.com/icon-rounded.svg",
       },
     ],
     team: [
       {
-            name: "Hardik Gupta",
-            role: "Head Organizer",
-            bio: "I am a developer",
-            imageUrl: "https://avatars.githubusercontent.com/u/113587014?v=4",
-            slackUrl: "https://hackclub.enterprise.slack.com/team/U07GXEVL48P"
-        }
+        name: "Hardik Gupta",
+        role: "Head Organizer",
+        bio: "I am a developer",
+        imageUrl: "https://avatars.githubusercontent.com/u/113587014?v=4",
+        slackUrl: "https://hackclub.enterprise.slack.com/team/U07GXEVL48P",
+      },
     ],
     faqs: [
       {
-    question: "What is Hack Club?",
-    answer:
-      "Hack Club is a global nonprofit network of student-led coding clubs where teenagers learn programming by building real-world projects, collaborating with others, and developing practical tech skills.",
-  }
-    ]
+        question: "What is Hack Club?",
+        answer:
+          "Hack Club is a global nonprofit network of student-led coding clubs where teenagers learn programming by building real-world projects, collaborating with others, and developing practical tech skills.",
+      },
+    ],
   };
   const eventDate = new Date(data.dateTime);
   const date = eventDate.getDate();
@@ -76,7 +80,7 @@ export default function CityPage({ params }: { params: Promise<{ slug: string }>
           width={400}
           height={100}
           loading="eager"
-        className="mx-auto"
+          className="mx-auto"
         />
         <p className="text-sm md:text-base tracking-widest text-gray-200 uppercase p-1">
           Hack Club Blueprint Presents
@@ -115,7 +119,8 @@ export default function CityPage({ params }: { params: Promise<{ slug: string }>
                 LOCATION
               </p>
               <h2 className="text-white text-lg font-bold mt-1">
-                {data.city?.length > 0 ? `${data.city}, ` : null}{data.country}
+                {data.city?.length > 0 ? `${data.city}, ` : null}
+                {data.country}
               </h2>
             </div>
             <div className="p-4 text-center">
@@ -138,43 +143,55 @@ export default function CityPage({ params }: { params: Promise<{ slug: string }>
       <Faq id="faq" faqs={data.faqs} />
       <div className="container mx-auto py-8 my-12 px-6 md:px-14 max-w-7xl">
         <div className="px-6 md:px-14 bg-[#071d35] py-6 md:py-8">
-          <h4 className="text-4xl text-bp-warning font-rcfull font-bold">Ready to build something real?</h4>
-        <p className="text-2xl">One day. Hands on tools. Zero fluff.</p>
-        <div className="my-2 flex flex-wrap gap-4">
-          <Badge variant="outline" className="text-lg px-4 py-2">
-            <Calendar1Icon className="inline-block mr-2" />
-            Full-day workshop
-          </Badge>
-          <Badge variant="outline" className="text-lg px-4 py-2">
-           <StarIcon className="inline-block mr-2" />
-           Components provided
-          </Badge>
-          <Badge variant="outline" className="text-lg px-4 py-2">
-            <CheckCircle2Icon className="inline-block mr-2" />
-            100% free
-          </Badge> 
-        </div>
-        <p className="mt-8 text-gray-200">
-          Whether you're chasing your first PCB layout, your first firmware flash, or finally turning that idea into a working prototype this is the day to make it happen.
-        </p>
-        <p className="mt-4 text-gray-400">
-          Bench time, real components, and a room full of people who've been exactly where you are.
-        </p>
-        <div className="mt-8 flex flex-wrap gap-4">
-          <Button className="px-6 text-lg bg-bp-warning hover:bg-bp-warning-darkere font-bold rounded-none text-[#071d35] btn-grain">
-            <a href={data.signupLink} aria-label="Sign Up">
-              Sign Up
-            </a>
-          </Button>
-          <Button variant="outline" className="px-6 text-lg font-bold rounded-none text-gray-200 hover:bg-image-contrast/10">
-            <a href={data.slackUrl} aria-label="Slack">
-              Join Slack
-            </a>
-          </Button>
-        </div>
+          <h4 className="text-4xl text-bp-warning font-rcfull font-bold">
+            Ready to build something real?
+          </h4>
+          <p className="text-2xl">One day. Hands on tools. Zero fluff.</p>
+          <div className="my-2 flex flex-wrap gap-4">
+            <Badge variant="outline" className="text-lg px-4 py-2">
+              <Calendar1Icon className="inline-block mr-2" />
+              Full-day workshop
+            </Badge>
+            <Badge variant="outline" className="text-lg px-4 py-2">
+              <StarIcon className="inline-block mr-2" />
+              Components provided
+            </Badge>
+            <Badge variant="outline" className="text-lg px-4 py-2">
+              <CheckCircle2Icon className="inline-block mr-2" />
+              100% free
+            </Badge>
+          </div>
+          <p className="mt-8 text-gray-200">
+            Whether you're chasing your first PCB layout, your first firmware
+            flash, or finally turning that idea into a working prototype this is
+            the day to make it happen.
+          </p>
+          <p className="mt-4 text-gray-400">
+            Bench time, real components, and a room full of people who've been
+            exactly where you are.
+          </p>
+          <div className="mt-8 flex flex-wrap gap-4">
+            <Button className="px-6 text-lg bg-bp-warning hover:bg-bp-warning-darkere font-bold rounded-none text-[#071d35] btn-grain">
+              <a href={data.signupLink} aria-label="Sign Up">
+                Sign Up
+              </a>
+            </Button>
+            <Button
+              variant="outline"
+              className="px-6 text-lg font-bold rounded-none text-gray-200 hover:bg-image-contrast/10"
+            >
+              <a href={data.slackUrl} aria-label="Slack">
+                Join Slack
+              </a>
+            </Button>
+          </div>
         </div>
       </div>
-      <Footer registerUrl={data.signupLink} slackUrl={data.slackUrl} email={data.email} />
+      <Footer
+        registerUrl={data.signupLink}
+        slackUrl={data.slackUrl}
+        email={data.email}
+      />
     </>
   );
 }

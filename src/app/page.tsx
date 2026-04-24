@@ -1,7 +1,5 @@
+import { redirect } from "next/navigation";
+
 export default function Home() {
-  return (
-    <main>
-      <div>Welcome To Build Guild</div>
-    </main>
-  );
+  return null;
 }
