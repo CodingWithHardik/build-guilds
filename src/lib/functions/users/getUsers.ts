@@ -6,8 +6,6 @@ export const getUsers = cache(async(protocol: string, host: string = "localhost"
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          "Cache-Control": "no-cache",
-          "Pragma": "no-cache",
           "Cookie": cookie
         }
     })
