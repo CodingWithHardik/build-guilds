@@ -34,6 +34,7 @@ model Event {
   description String
   startDate DateTime
   endDate DateTime
+  logo String @default("https://cdn.hackclub.com/019ddd5e-2595-7627-a954-bcf0336fc9c6/Untitled%20design-2.png")
   users EventUsers[]
   EventCities EventCities[]
 }

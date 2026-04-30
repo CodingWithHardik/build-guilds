@@ -13,7 +13,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import Image from "next/image";
-import React from "react";
+import React, { useContext } from "react";
 import { redirect } from 'next/navigation'
 
 export default function Login() {
@@ -95,6 +95,7 @@ export default function Login() {
       if (responseAPI.status === 202) {
         setError("");
         setSuccess("Logged in successfully. Redirecting...");
+        if (response.isNew) window.location.assign("/onboarding");;
         redirect("/");
       }
     }

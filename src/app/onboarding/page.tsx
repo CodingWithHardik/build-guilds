@@ -26,7 +26,6 @@ export default function Onboarding() {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
-                "Authorization": `Bearer ${ctx?.user?.email}`
             },
             body: JSON.stringify({ name }),
         })

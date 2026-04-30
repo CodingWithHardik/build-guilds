@@ -33,6 +33,6 @@ export async function POST(request: NextRequest) {
     if (typeof token === "object" && token !== null && "code" in token && token.code === 202 && "token" in token) {
         const cookieStore = await cookies();
         cookieStore.set("token", token.token as string, { path: "/", httpOnly: true, secure: process.env.NODE_ENV === "production", sameSite: "lax", maxAge: 60 * 60 * 24 * 2 });
-        return new Response(JSON.stringify({ token: token.token }), { status: 202 });
+        return new Response(JSON.stringify({ token: token.token, isNew: !getData }), { status: 202 });
     }
 }

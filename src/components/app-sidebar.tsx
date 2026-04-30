@@ -1,12 +1,10 @@
 "use client";
-import { ChevronDown } from "lucide-react"
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "./ui/dropdown-menu"
-import { Sidebar, SidebarHeader, SidebarMenu, SidebarMenuButton, SidebarMenuItem, useSidebar } from "./ui/sidebar"
-import { Label } from "./ui/label"
-import Image from "next/image"
+import { Sidebar, SidebarHeader, SidebarMenu, SidebarMenuItem, useSidebar } from "./ui/sidebar"
 import SideBarMenuDropdown from "./miniblocks/SidebarDropdown"
+import { useContext } from "react";
+import { UserContext } from "@/context/user-context";
 
-export function AppSidebar() {
+export function AppSidebar({ host }: { host: string }) {
   const {
     state,
     open,
@@ -16,22 +14,25 @@ export function AppSidebar() {
     isMobile,
     toggleSidebar,
   } = useSidebar();
-    const events = [
-    {
-      "id": 1,
-      "name": "Build Guild",
-      "slug": "build-guild",
-      "domain": "buildguild.com",
-      "logo": "https://avatars.githubusercontent.com/u/113587014?v=4"
-    },
-    {
-      "id": 2,
-      "name": "Build Guild",
-      "slug": "build-guild",
-      "domain": "buildguild.com",
-      "logo": "https://avatars.githubusercontent.com/u/112583033?v=4"
-    }
-  ]
+  const ctx = useContext(UserContext);
+  const date = (dataget: string) => {
+    const date = new Date(dataget);
+    const utcDate = date.getUTCDate();
+    const utcmonth = date.toLocaleString("en-GB", { month: "long" });
+    const suffix = ["th", "st", "nd", "rd"][(utcDate % 10 > 3 || Math.floor(utcDate / 10) === 1) ? 0 : (utcDate % 10)];
+    return `${utcDate}${suffix} ${utcmonth}`;
+  }
+  const events = ctx?.events.map((eventsone, index) => ({
+    id: index + 1,
+    name: eventsone.eventName,
+    slug: eventsone.eventslug,
+    domain: `${host}/${eventsone.eventslug}/preview`,
+    logo: eventsone.logo,
+    description: eventsone.description,
+    startDate: eventsone.startDate,
+    endDate: eventsone.endDate,
+    subheading: `${date(eventsone.startDate)} - ${date(eventsone.endDate)}`,
+  })) ?? [];
   return (
     <Sidebar>
         <SidebarHeader>

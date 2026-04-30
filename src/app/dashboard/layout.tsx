@@ -1,17 +1,22 @@
 import { AppSidebar } from "@/components/app-sidebar";
-import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
+import { Separator } from "@/components/ui/separator";
+import { SidebarInset, SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
 import type { Metadata } from "next";
+import { headers } from "next/headers";
 
 export const metadata: Metadata = {
   title: "Build Guild - Dashboard",
   description: "Dashboard for Build Guild custom city website builder.",
 };
 
-export default function DashboardLayout({
+export default async function DashboardLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
+  const head = await headers();
+  const protocol = head.get("x-forwarded-proto") || "http";
+  const host = head.get("host");
   return (
     <SidebarProvider
       style={
@@ -21,7 +26,7 @@ export default function DashboardLayout({
         } as React.CSSProperties
       }
     >
-      <AppSidebar />
+      <AppSidebar host={`${protocol}://${host}`} />
       <div className="flex min-h-screen w-full">
         <SidebarTrigger className="absolute top-4 left-4 z-50 md:hidden" />
         {children}
