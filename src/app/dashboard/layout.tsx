@@ -28,7 +28,7 @@ export default async function DashboardLayout({
     >
       <AppSidebar host={`${protocol}://${host}`} />
       <SidebarInset>
-        <SidebarTrigger className="absolute top-4 left-4 z-50 md:hidden" />
+        <SidebarTrigger className="absolute top-4 left-4 z-50 md:hidden bg-bp-warning rounded-full border-2 border-[#0b3869] hover:bg-bp-warning hover:text-[#0b3869] text-[#0b3869]" />
         {children}
       </SidebarInset>
     </SidebarProvider>
