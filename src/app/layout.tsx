@@ -17,7 +17,7 @@ export default async function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  let userData: { email: string; name: string; isNew?: boolean } | null = null;
+  let userData: { email: string; name: string; isNew?: boolean, avatar?: string } | null = null;
   let eventsData: { id: string; eventName: string; slug: string; description: string; startDate: Date; endDate: Date; logo: string }[] | null = null;
   const headerlist = await headers();
   const pathname = headerlist.get("x-pathname") || headerlist.get("x-next-pathname") || "/";
@@ -58,7 +58,7 @@ export default async function RootLayout({
         {pathname.startsWith("/auth") ? (
           children
         ) : (
-          <UserProvider userdata={{ email: userData?.email!, name: userData?.name! }} eventsData={eventsData?.map(
+          <UserProvider userdata={{ email: userData?.email!, name: userData?.name!, avatar: userData?.avatar! }} eventsData={eventsData?.map(
             (items) => ({
               eventId: items.id,
               eventName: items.eventName,

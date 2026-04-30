@@ -7,6 +7,7 @@ import { UserContext } from "@/context/user-context";
 import { ArrowRight } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useContext, useState } from "react";
+import config from "../../../config.json";
 
 export default function Onboarding() { 
     const [name, setName] = useState("");
@@ -51,7 +52,7 @@ export default function Onboarding() {
             setError("Something went wrong. Please try again.");
             return;
         };
-        ctx.setUser({ name: name, email: email });
+        ctx.setUser({ name: name, email: email, avatar: ctx?.user?.avatar || config.defaultAvatar });
         router.push("/");
     }
     return (

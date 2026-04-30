@@ -14,9 +14,11 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import Image from "next/image";
 import React, { useContext } from "react";
-import { redirect } from 'next/navigation'
+import { redirect } from "next/navigation";
+import { UserContext } from "@/context/user-context";
 
 export default function Login() {
+  const ctx = useContext(UserContext);
   const [isLoading, setIsLoading] = React.useState(false);
   const [email, setEmail] = React.useState("");
   const [otp, setOTP] = React.useState("");
@@ -31,29 +33,29 @@ export default function Login() {
     if (!isSecondStep) {
       try {
         const responseAPI = await fetch("/api/auth/requestOTP", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ email }),
-      });
-      if (responseAPI.status === 429)
-        return setError("Too many requests. Please try again later.");
-      if (responseAPI.status === 229)
-        return setError(
-          "Too many OTP requests. Please try again after 24 hours.",
-        );
-      if (responseAPI.status === 400) return setError("No email provided");
-      if (responseAPI.status === 200)
-        return setError(
-          "Invalid Email Address. Please use your blueprint email.",
-        );
-      if (responseAPI.status === 202) {
-        setIsSecondStep(true);
-        setError("");
-        setSuccess("OTP sent successfully.");
-        setIsLoading(false);
-      }
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ email }),
+        });
+        if (responseAPI.status === 429)
+          return setError("Too many requests. Please try again later.");
+        if (responseAPI.status === 229)
+          return setError(
+            "Too many OTP requests. Please try again after 24 hours.",
+          );
+        if (responseAPI.status === 400) return setError("No email provided");
+        if (responseAPI.status === 200)
+          return setError(
+            "Invalid Email Address. Please use your blueprint email.",
+          );
+        if (responseAPI.status === 202) {
+          setIsSecondStep(true);
+          setError("");
+          setSuccess("OTP sent successfully.");
+          setIsLoading(false);
+        }
       } catch (error) {
         setError("An error occurred. Please try again later.");
         setIsLoading(false);
@@ -82,21 +84,45 @@ export default function Login() {
       }
       if (responseAPI.status === 200) {
         setOTP("");
-        setIsLoading(false) 
+        setIsLoading(false);
         setError(response.error);
         return;
       }
       if (responseAPI.status === 500) {
         setOTP("");
-        setIsLoading(false)
-        setError("Internal Server Error")
+        setIsLoading(false);
+        setError("Internal Server Error");
         return;
-      };
+      }
       if (responseAPI.status === 202) {
         setError("");
         setSuccess("Logged in successfully. Redirecting...");
-        if (response.isNew) window.location.assign("/onboarding");;
-        redirect("/");
+        ctx?.setUser({
+          name: response.name,
+          email: response.email,
+          avatar: response.avatar,
+        });
+        if (!response.isNew) {
+          const eventresponse = await fetch("/api/events/getEvents", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+          });
+          const eventData = await eventresponse.json();
+          const data = eventData.map((event: any, index: number) => ({
+            eventId: event.id,
+            eventName: event.eventName,
+            eventslug: event.slug,
+            description: event.description,
+            logo: event.logo,
+            startDate: event.startDate,
+            endDate: event.endDate,
+          }));
+          ctx?.setEvents(data);
+        }
+        if (response.isNew) window.location.assign("/onboarding");
+        window.location.assign("/");
       }
     }
   };
@@ -114,7 +140,7 @@ export default function Login() {
       </div>
       <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 text-white w-full px-4">
         <Card className="w-full sm:max-w-sm h-fit bg-[#071d35] mx-auto">
-          <CardHeader className="p-4 space-y-1"> 
+          <CardHeader className="p-4 space-y-1">
             <div>
               <Image
                 src="https://github.com/CodingWithHardik/assets/blob/main/build-guilds/logo.png?raw=true"
@@ -145,9 +171,7 @@ export default function Login() {
                       id="email"
                       type="text"
                       placeholder="hardik@example.com"
-                      onChange={(e) =>
-                        setEmail(`${e.target.value}`)
-                      }
+                      onChange={(e) => setEmail(`${e.target.value}`)}
                       required
                       maxLength={30}
                       className="bg-[#071d35]/10 text-white placeholder:text-gray-500 border-0 focus-visible:ring-0 focus:ring-offset-0 rounded-none flex-1 min-w-0"
@@ -165,16 +189,20 @@ export default function Login() {
                       placeholder="AB321E"
                       value={otp}
                       onPaste={(e) => {
-                        
                         const pasted = e.clipboardData.getData("text");
-                        let value = pasted.replace(/\s/g, "").toUpperCase().slice(0,6)
-                        setOTP(value)
+                        let value = pasted
+                          .replace(/\s/g, "")
+                          .toUpperCase()
+                          .slice(0, 6);
+                        setOTP(value);
                         setTimeout(() => {
                           e.preventDefault();
-                        },0)
+                        }, 0);
                       }}
                       onChange={(e) => {
-                        let value = e.target.value.replace(/\s/g, "").toUpperCase();
+                        let value = e.target.value
+                          .replace(/\s/g, "")
+                          .toUpperCase();
                         value = value.slice(0, 6);
                         setOTP(value);
                       }}

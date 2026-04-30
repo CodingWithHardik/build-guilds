@@ -29,11 +29,11 @@ import { Calendar } from "../ui/calendar";
 import { cn } from "@/lib/utils";
 import { Textarea } from "../ui/textarea";
 import { UserContext } from "@/context/user-context";
+import config from "../../../config.json"
 
 export default function SideBarMenuDropdown({
   events,
   isMobile,
-  selectedEvent,
 }: {
   events: {
     id: number;
@@ -47,9 +47,9 @@ export default function SideBarMenuDropdown({
     subheading: string;
   }[];
   isMobile: boolean;
-  selectedEvent: number;
 }) {
-  const [event, setEvent] = useState(selectedEvent);
+  const ctx = useContext(UserContext);
+  const [event, setEvent] = useState(0);
   const [dialogOpen, setDialogOpen] = useState(false);
 
   const [data, setData] = useState({
@@ -72,9 +72,19 @@ export default function SideBarMenuDropdown({
   const [debouncedUsername, setDebouncedUsername] = useState(data.username);
 
   const [error, setError] = useState(undefined as string | undefined);
-  const ctx = useContext(UserContext);
+  useEffect(() => {
+    if (typeof window !== "undefined" && ctx?.user?.email) {
+      const selectedEvent = localStorage.getItem(
+        `${ctx?.user?.email}_selectedEvent`,
+      );
+      if (selectedEvent) {
+        setEvent(Number(selectedEvent));
+      }
+    }
+  }, [ctx?.user?.email]);
   const handleSelectEvent = (id: number) => {
     setEvent(id);
+    localStorage.setItem(`${ctx?.user?.email}_selectedEvent`, String(id));
   };
 
   const handlepopover = async (e: React.FormEvent<HTMLFormElement>) => {
@@ -140,7 +150,7 @@ export default function SideBarMenuDropdown({
           description: data.description,
           startDate: String(data.startDate),
           endDate: String(data.endDate),
-          logo: data.logo.length > 0 ? data.logo : "https://cdn.hackclub.com/019ddd5e-2595-7627-a954-bcf0336fc9c6/Untitled%20design-2.png",
+          logo: data.logo.length > 0 ? data.logo : config.eventLogo,
         },
         ...ctx?.events,
       ])

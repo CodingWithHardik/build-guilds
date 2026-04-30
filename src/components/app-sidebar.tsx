@@ -1,8 +1,9 @@
 "use client";
-import { Sidebar, SidebarHeader, SidebarMenu, SidebarMenuItem, useSidebar } from "./ui/sidebar"
+import { Sidebar, SidebarContent, SidebarFooter, SidebarHeader, SidebarMenu, SidebarMenuItem, useSidebar } from "./ui/sidebar"
 import SideBarMenuDropdown from "./miniblocks/SidebarDropdown"
 import { useContext } from "react";
 import { UserContext } from "@/context/user-context";
+import SidebarUserDropdown from "./miniblocks/SidebarUserDropdown";
 
 export function AppSidebar({ host }: { host: string }) {
   const {
@@ -35,13 +36,23 @@ export function AppSidebar({ host }: { host: string }) {
   })) ?? [];
   return (
     <Sidebar>
-        <SidebarHeader>
+        <SidebarHeader className="my-1">
             <SidebarMenu>
                 <SidebarMenuItem>
-                    <SideBarMenuDropdown events={events} isMobile={isMobile} selectedEvent={0} />
+                    <SideBarMenuDropdown events={events} isMobile={isMobile} />
                 </SidebarMenuItem>
             </SidebarMenu>
         </SidebarHeader>
+        <SidebarContent>
+
+        </SidebarContent>
+        <SidebarFooter className="my-1">
+          <SidebarMenu>
+            <SidebarMenuItem>
+              <SidebarUserDropdown isMobile={isMobile} />
+            </SidebarMenuItem>
+          </SidebarMenu>
+        </SidebarFooter>
     </Sidebar>
   )
 }

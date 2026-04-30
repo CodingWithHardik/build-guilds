@@ -4,7 +4,8 @@ import { createContext, useState } from "react";
 
 type UserData = {
   name: string | null;
-  email: string;
+  email: string | null;
+  avatar: string | null;
 };
 
 type EventData = {

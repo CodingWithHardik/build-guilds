@@ -9,6 +9,7 @@ export const POST = apiAuth(async (request: NextRequest) => {
     return NextResponse.json({
         email: requestData.email,
         name: requestData.name,
+        avatar: requestData.avatar,
         isNew
     })
 })
