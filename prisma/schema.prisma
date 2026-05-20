@@ -35,6 +35,7 @@ model Event {
   description String
   startDate DateTime
   endDate DateTime
+  emailSlug String
   logo String @default("https://cdn.hackclub.com/019ddd5e-2595-7627-a954-bcf0336fc9c6/Untitled%20design-2.png")
   users EventUsers[]
   EventCities EventCities[]
@@ -47,6 +48,7 @@ model EventUsers {
   role EventUserRole?
   event Event @relation(fields: [eventId], references: [id])
   user User @relation(fields: [userId], references: [id])
+  @@unique([eventId, userId])
 }
 
 enum EventUserRole {
@@ -58,6 +60,8 @@ enum EventUserRole {
 model EventCities {
   id String @id @default(uuid())
   cityslug String @unique
+  isVerified Boolean @default(false)
+  verificationEmail String
   eventId String
   event Event @relation(fields: [eventId], references: [id])
   CityUsers CityUsers[]
@@ -66,11 +70,12 @@ model EventCities {
 
 model CityUsers {
   id String @id @default(uuid())
-  cityslug String
+  cityId String
   userId String
   role CityUserRole
   user User @relation(fields: [userId], references: [id])
-  eventCities EventCities @relation(fields: [cityslug], references: [cityslug])
+  eventCities EventCities @relation(fields: [cityId], references: [id])
+  @@unique([cityId, userId])
 }
 
 enum CityUserRole {
@@ -114,7 +119,7 @@ model EventPlan {
 
 model EventSponsors {
   id String @id @default(uuid())
-  lgoo String
+  logo String
   name String
   details Details? @relation(fields: [id], references: [id])
 }

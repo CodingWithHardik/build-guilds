@@ -10,9 +10,7 @@ import {
 import { SidebarMenuButton } from "../ui/sidebar";
 import { UserContext } from "@/context/user-context";
 import config from "../../../config.json";
-import { Label } from "../ui/label";
-import { ChevronDown, ChevronUp, LogOut, Settings } from "lucide-react";
-import { Button } from "../ui/button";
+import { LogOut, Settings } from "lucide-react";
 import { redirect } from "next/navigation";
 
 export default function SidebarUserDropdown({

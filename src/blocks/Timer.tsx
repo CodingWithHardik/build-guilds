@@ -1,11 +1,11 @@
 import { useEffect, useState } from "react";
 
 export default function Timer({ dateTime }: { dateTime: string }) {
-  const DATE = new Date(dateTime).getTime();
-  const [timeleft, settimeleft] = useState(getTime());
+  const [timeleft, settimeleft] = useState(getTime(dateTime));
   const [mounted, setMounted] = useState(false);
-  function getTime() {
-    const difference = DATE - Date.now();
+
+  function getTime(dt: string) {
+    const difference = new Date(dt).getTime() - Date.now();
     return {
       days: Math.max(0, Math.floor(difference / (1000 * 60 * 60 * 24))),
       hours: Math.max(0, Math.floor((difference / (1000 * 60 * 60)) % 24)),
@@ -15,9 +15,10 @@ export default function Timer({ dateTime }: { dateTime: string }) {
   }
   useEffect(() => {
     setMounted(true);
-    const id = setInterval(() => settimeleft(getTime()), 1000);
+    settimeleft(getTime(dateTime));
+    const id = setInterval(() => settimeleft(getTime(dateTime)), 1000);
     return () => clearInterval(id);
-  }, []);
+  }, [dateTime]);
   if (!mounted) return null;
   return (
     <div className="w-full bg-[#071d35] border-[#2E4A6F] border flex justify-center">

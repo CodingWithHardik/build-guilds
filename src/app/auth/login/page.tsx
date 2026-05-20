@@ -122,7 +122,7 @@ export default function Login() {
           ctx?.setEvents(data);
         }
         if (response.isNew) window.location.assign("/onboarding");
-        window.location.assign("/");
+        else window.location.assign("/");
       }
     }
   };

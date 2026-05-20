@@ -10,16 +10,14 @@ import { SidebarMenuButton } from "../ui/sidebar";
 import { Label } from "../ui/label";
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
 import { useContext, useEffect, useState } from "react";
-import { format, set } from "date-fns";
+import { format } from "date-fns";
 import {
   Dialog,
-  DialogClose,
   DialogContent,
   DialogDescription,
   DialogFooter,
   DialogHeader,
   DialogTitle,
-  DialogTrigger,
 } from "../ui/dialog";
 import { Field, FieldGroup } from "../ui/field";
 import { Input } from "../ui/input";
@@ -29,7 +27,7 @@ import { Calendar } from "../ui/calendar";
 import { cn } from "@/lib/utils";
 import { Textarea } from "../ui/textarea";
 import { UserContext } from "@/context/user-context";
-import config from "../../../config.json"
+import config from "../../../config.json";
 
 export default function SideBarMenuDropdown({
   events,
@@ -56,6 +54,7 @@ export default function SideBarMenuDropdown({
     name: "",
     username: "",
     description: "",
+    emailSlug: "",
     logo: "",
     startDate: undefined as Date | undefined,
     endDate: undefined as Date | undefined,
@@ -78,22 +77,102 @@ export default function SideBarMenuDropdown({
         `${ctx?.user?.email}_selectedEvent`,
       );
       if (selectedEvent) {
+        ctx?.setSelectedEvent(Number(selectedEvent));
+        const city = async (id: number) => {
+          if (id === 0) return;
+          const cityget = await fetch(`/api/city/getCity`, {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+              eventId: ctx?.events[Number(id) - 1]?.eventId || "",
+            }),
+          });
+          
+          const cityjs = await cityget.json();
+          const citydetails = cityjs.map((city: any) => ({
+            id: city.id,
+            slug: city.cityslug,
+            name: city.details.name,
+            date: city.details.date,
+            location: city.details.location,
+            venue: city.details.venue,
+            signuplink: city.details.signuplink,
+            slackChannel: city.details.slackChannel,
+            domain: city.details.domain,
+            eventPlan: city.details.eventPlan,
+            eventSponsors: city.details.eventSponsors,
+          }));
+          ctx?.setCity(citydetails || []);
+          ctx?.setIsSelected(true)
+        };
+        if (ctx?.events.length === 0) {
+          ctx?.setCity([]);
+          ctx?.setIsSelected(true)
+        } else {
+          city(Number(selectedEvent));
+        }
         setEvent(Number(selectedEvent));
       }
     }
   }, [ctx?.user?.email]);
   const handleSelectEvent = (id: number) => {
     setEvent(id);
+    ctx?.setIsSelected(false)
+    const city = async (id: number) => {
+      if (id === 0) return;
+      const cityget = await fetch(`/api/city/getCity`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          eventId: ctx?.events[Number(id) - 1]?.eventId || "",
+        }),
+      });
+      const cityjs = await cityget.json();
+      const citydetails = cityjs.map((city: any) => ({
+        id: city.id,
+        slug: city.cityslug,
+        name: city.details.name,
+        date: city.details.date,
+        location: city.details.location,
+        venue: city.details.venue,
+        signuplink: city.details.signuplink,
+        slackChannel: city.details.slackChannel,
+        domain: city.details.domain,
+        eventPlan: city.details.eventPlan,
+        eventSponsors: city.details.eventSponsors,
+      }));
+      ctx?.setCity(citydetails || []);
+      ctx?.setIsSelected(true);
+    };
+    if (ctx?.events.length === 0) {
+      ctx?.setCity([]);
+      ctx?.setIsSelected(true);
+    } else {
+      city(id);
+    }
     localStorage.setItem(`${ctx?.user?.email}_selectedEvent`, String(id));
+    ctx?.setSelectedEvent(id);
   };
 
   const handlepopover = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setLoading(true);
-    if (String(error)?.length > 1) {
+    
+    if (error && String(error)?.length > 1) {
       setLoading(false);
+      return;
     }
-    if (!data.name || !data.username || !data.description || !data.startDate || !data.endDate) {
+    if (
+      !data.name ||
+      !data.username ||
+      !data.description ||
+      !data.startDate ||
+      !data.endDate
+    ) {
       setError("Please fill all the fields");
       setLoading(false);
       return;
@@ -122,6 +201,7 @@ export default function SideBarMenuDropdown({
         logo: data.logo,
         startDate: startDate,
         endDate: endDate,
+        emailSlug: data.emailSlug,
       }),
     });
     if (!res.ok) {
@@ -144,7 +224,7 @@ export default function SideBarMenuDropdown({
       setError(undefined);
       ctx?.setEvents([
         {
-          eventId: responseData.id,
+          eventId: responseData.eventId,
           eventName: data.name,
           eventslug: data.username,
           description: data.description,
@@ -153,11 +233,12 @@ export default function SideBarMenuDropdown({
           logo: data.logo.length > 0 ? data.logo : config.eventLogo,
         },
         ...ctx?.events,
-      ])
+      ]);
       setData({
         name: "",
         username: "",
         description: "",
+        emailSlug: "",
         logo: "",
         startDate: undefined,
         endDate: undefined,
@@ -314,7 +395,7 @@ export default function SideBarMenuDropdown({
               Create Event so organizers can manage or create thier city website
             </DialogDescription>
           </DialogHeader>
-          <form onSubmit={handlepopover}>
+          <form onSubmit={handlepopover} id="createEventForm">
             <FieldGroup className="gap-4">
               <Field className="flex w-full flex-col gap-2">
                 <Label className="text-left text-sm font-medium text-bp-warning-darker">
@@ -358,6 +439,30 @@ export default function SideBarMenuDropdown({
               </Field>
               <Field className="flex w-full flex-col gap-2">
                 <Label className="text-left text-sm font-medium text-bp-warning-darker">
+                  Event Email Username
+                </Label>
+
+                <div className="flex items-center w-full rounded-md border border-gray-500 bg-white/10 overflow-hidden focus-within:ring-2 focus-within:ring-gray-500">
+                  <span className="px-3 py-2 text-white/50 text-sm select-none bg-white/5 border-r border-gray-500 whitespace-nowrap">
+                    @
+                  </span>
+                  <Input
+                    type="text"
+                    required
+                    placeholder="Event Name"
+                    className="flex-1 min-w-0 px-3 py-2 bg-transparent focus:outline-none placeholder:text-white/40 text-white text-sm rounded-none border-none"
+                    value={data.emailSlug}
+                    onChange={(e) =>
+                      setData({ ...data, emailSlug: e.target.value })
+                    }
+                  />
+                  <span className="px-3 py-2 text-white/50 text-sm select-none bg-white/5 border-l border-gray-500 whitespace-nowrap">
+                    .hackclub.com
+                  </span>
+                </div>
+              </Field>
+              <Field className="flex w-full flex-col gap-2">
+                <Label className="text-left text-sm font-medium text-bp-warning-darker">
                   Event Description
                 </Label>
                 <Textarea
@@ -365,7 +470,9 @@ export default function SideBarMenuDropdown({
                   placeholder="Event description"
                   className="w-full rounded-md border border-gray-500 px-3 py-2 focus:outline-none bg-white/10 placeholder:text-white text-white "
                   value={data.description}
-                  onChange={(e) => setData({ ...data, description: e.target.value })}
+                  onChange={(e) =>
+                    setData({ ...data, description: e.target.value })
+                  }
                 />
               </Field>
               <Field className="flex w-full flex-col gap-2">
@@ -471,8 +578,9 @@ export default function SideBarMenuDropdown({
                 type="submit"
                 className="rounded-md bg-bp-warning-darker hover:bg-bp-warning/90 text-[#0b3869] font-medium"
                 disabled={loading}
+                form="createEventForm"
               >
-                Save changes
+                {loading ? "Creating..." : "Create Event"}
               </Button>
             </DialogFooter>
           </form>

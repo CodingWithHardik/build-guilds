@@ -23,6 +23,7 @@ export default function SettingsPage() {
     const file = e.target.files?.[0];
     setSuccess(false);
     setIsDisabled(true);
+    setError("");
     if (!file) {
       setIsDisabled(false);
       return;
@@ -38,29 +39,38 @@ export default function SettingsPage() {
       method: "POST",
       body: formData,
     });
-    if (!res.ok || res.status === 401) {
-      setError("Failed to upload avatar.");
-    }
-    if (res.status === 400) {
+    try {
       const data = await res.json();
-      setError(data.error || "Failed to upload avatar.");
+      if (!res.ok || res.status === 401) {
+        setError("Failed to upload avatar.");
+      }
+      if (res.status === 400) {
+        setError(data.error || "Failed to upload avatar.");
+      }
+      if (res.status === 200) {
+        if (!data.avatarUrl) {
+          setError("Failed to upload avatar.");
+          return;
+        }
+        setSuccess(true);
+        ctx?.setUser({
+          avatar: data.avatarUrl,
+          email: ctx.user?.email || "",
+          name: ctx.user?.name || "",
+        });
+        setTimeout(() => {
+          setSuccess(false);
+        }, 3000);
+      }
+    } catch (err) {
+      setError("An unexpected error occurred. Please try again.");
+      setIsDisabled(false);
+    } finally {
+      setIsDisabled(false);
     }
-    if (res.status === 200) {
-      const data = await res.json();
-      setSuccess(true);
-      ctx?.setUser({
-        avatar: data.avatarUrl,
-        email: ctx.user?.email || "",
-        name: ctx.user?.name || "",
-      });
-    }
-    setIsDisabled(false);
-    setTimeout(() => {
-      setSuccess(false);
-    }, 3000)
   };
   const handleSaveDetails = async () => {
-    setDetailsSuccess(false)
+    setDetailsSuccess(false);
     setSaveDetails(true);
     if (ctx?.user?.name === name) {
       setSaveDetails(false);
@@ -72,7 +82,7 @@ export default function SettingsPage() {
         "Content-Type": "application/json",
       },
       body: JSON.stringify({ name }),
-    })
+    });
     if (!res.ok || res.status === 401) {
       setDetailsError("Failed to update name.");
     }
@@ -90,9 +100,9 @@ export default function SettingsPage() {
       setDetailsSuccess(true);
       setTimeout(() => {
         setDetailsSuccess(false);
-      }, 3000)
+      }, 3000);
     }
-  }
+  };
   return (
     <div className="p-6">
       <h1 className="text-7xl font-bold text-white p-4 text-center font-rcfull bg-[#071930] rounded-lg">
@@ -133,7 +143,7 @@ export default function SettingsPage() {
             )}
           </div>
           <div className="p-4">
-            <h2 className="text-9xl font-bold text-bp-warning mb-4 text-right font-rcfull">
+            <h2 className="font-bold text-bp-warning mb-4 lg:text-right font-rcfull text-6xl text-center lg:text-8xl xl:text-9xl">
               Profile Avatar
             </h2>
             <p className="text-gray-400 mb-4 text-center">

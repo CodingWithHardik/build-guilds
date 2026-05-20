@@ -1,4 +1,4 @@
-import crypot from "crypto";
+import crypto from "crypto";
 import { render } from "@react-email/components";
 import VerificationOTP from "../../../../../emails/otp";
 import nodemailer from "nodemailer";
@@ -14,35 +14,36 @@ export async function POST(request: NextRequest) {
       status: 400,
     });
   const redis = getRedis();
-  const current = Number((await redis.get(`limit:otp:${email}`)) ?? 0);
+  const emailfilter = email.toLowerCase().trim();
+  const current = Number((await redis.get(`limit:otp:${emailfilter}`)) ?? 0);
   if (current >= 10) {
     return new Response(JSON.stringify({ error: "Too many otp requests" }), {
       status: 229,
     });
   }
-  const newCount = await redis.incr(`limit:otp:${email}`);
+  const newCount = await redis.incr(`limit:otp:${emailfilter}`);
   if (newCount === 1) {
-    await redis.expire(`limit:otp:${email}`, 86400);
+    await redis.expire(`limit:otp:${emailfilter}`, 86400);
   }
-  let otp = await redis.get(email);
-  if (!otp || !otp?.length) {
-    otp = Array.from(
-      { length: 6 },
-      () =>
-        "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ"[
-          crypot.randomInt(0, "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ".length)
-        ],
-    ).join("");
-    await redis.set(email, otp, "EX", 60 * 10);
-  }
-  const emailHtml = await render(VerificationOTP(otp));
+  const otp = Array.from(
+    { length: 6 },
+    () =>
+      "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ"[
+        crypto.randomInt(0, "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ".length)
+      ],
+  ).join("");
+  const set = await redis.set(`otp:${emailfilter}`, otp, "EX", 60 * 10, "NX");
+  const finalOtp = set ? otp : (await redis.get(`otp:${emailfilter}`) ?? otp);
+  const emailHtml = await render(VerificationOTP(finalOtp));
   const emailTransporter = getEmailTransporter();
   await emailTransporter.sendMail({
     from: `"Build Guilds" <${process.env.GMAIL_USER}>`,
-    to: email,
+    to: emailfilter,
     subject: "Your Build Guilds OTP",
     html: emailHtml,
     priority: "high",
   });
-  return new Response(JSON.stringify({ message: "OTP sent successfully" }), { status: 202 });
+  return new Response(JSON.stringify({ message: "OTP sent successfully" }), {
+    status: 202,
+  });
 }

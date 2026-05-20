@@ -3,7 +3,7 @@ import Image from "next/image";
 import Navbar from "@/blocks/navbar";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { Nunito } from "next/font/google";
 import Sponsors from "@/blocks/sponsors";
 import Timer from "@/blocks/Timer";
@@ -25,8 +25,9 @@ export default function CityPage({
   const { slug } = React.use(params);
 
   if (slug.toLowerCase() !== "preview") notFound();
+  const [date1, setdate1] = useState<Date | null>(null);
 
-  const data = {
+  const defaultData = {
     signupLink: "https://blueprint.hackclub.com",
     email: "",
     city: "City",
@@ -65,11 +66,30 @@ export default function CityPage({
       },
     ],
   };
-  const eventDate = new Date(data.dateTime);
-  const date = eventDate.getDate();
-  const month = eventDate.toLocaleString("default", { month: "long" });
-  const year = eventDate.getFullYear();
+  const [data, setData] = useState(defaultData);
 
+  useEffect(() => {
+    const stored = localStorage.getItem("previewDetails");
+    if (stored) {
+      const parsed = JSON.parse(stored);
+      const ad = new Date(parsed.date);
+      const validDate = !isNaN(ad.getTime()) ? ad : null;
+      setdate1(validDate);
+      setData((prev) => ({
+        ...prev,
+        city: parsed.name || prev.city,
+        dateTime: validDate ? validDate.toISOString() : prev.dateTime,
+        country: parsed.location || prev.country,
+        venue: parsed.venue || prev.venue,
+        signupLink: parsed.signuplink || prev.signupLink,
+        slackUrl: parsed.slackChannel || prev.slackUrl,
+      }));
+    }
+  }, []);
+  const eventDate = new Date(data.dateTime);
+const date = eventDate.getUTCDate(); 
+const month = eventDate.toLocaleString("default", { month: "long", timeZone: "UTC" });
+const year = eventDate.getUTCFullYear();
   return (
     <>
       <Navbar signUp={data.signupLink} />

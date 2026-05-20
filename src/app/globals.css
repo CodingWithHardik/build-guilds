@@ -201,11 +201,15 @@
 @font-face {
   font-family: "R&C Basic Full";
   src: url("https://blueprint.hackclub.com/assets/assets/RC-BasicFull-44cb9a2f.eot");
-  src: url("https://blueprint.hackclub.com/assets/assets/RC-BasicFull-44cb9a2f.eot?#iefix") format("embedded-opentype"),
-    url("https://blueprint.hackclub.com/assets/assets/RC-BasicFull-d34bb48c.woff2") format("woff2"),
-    url("https://blueprint.hackclub.com/assets/assets/RC-BasicFull-0125415a.woff") format("woff"),
-    url("https://blueprint.hackclub.com/assets/assets/RC-BasicFull-d3dcfbdf.ttf") format("truetype");
-  /* font-weight: bold; */
+  src:
+    url("https://blueprint.hackclub.com/assets/assets/RC-BasicFull-44cb9a2f.eot?#iefix")
+      format("embedded-opentype"),
+    url("https://blueprint.hackclub.com/assets/assets/RC-BasicFull-d34bb48c.woff2")
+      format("woff2"),
+    url("https://blueprint.hackclub.com/assets/assets/RC-BasicFull-0125415a.woff")
+      format("woff"),
+    url("https://blueprint.hackclub.com/assets/assets/RC-BasicFull-d3dcfbdf.ttf")
+      format("truetype");
   font-style: normal;
   font-display: swap;
 }

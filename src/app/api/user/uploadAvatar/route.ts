@@ -21,21 +21,22 @@ export const POST = apiAuth(async (request: NextRequest) => {
         body: cdnForm,
     })
     if (!res.ok) return NextResponse.json({ error: "Failed to upload avatar. Please try again later." }, { status: 400 });
-    const data = await res.json();
+    const { url } = await res.json();
     if (res.status === 400) return NextResponse.json({ error: "Missing required parameters" }, { status: 400 });
     if (res.status === 401) return NextResponse.json({ error: "Invalid or missing API key" }, { status: 400 });
     if (res.status === 402) return NextResponse.json({ error: "Storage quota exceeded" }, { status: 400 });
     if (res.status === 404) return NextResponse.json({ error: "Resource not found" }, { status: 400 });
     if (res.status === 422) return NextResponse.json({ error: "Validation failed" }, { status: 400 });
+    if (!url) return NextResponse.json({ error: "Failed to upload avatar. Please try again later." }, { status: 400 });
     try {
         await prisma.user.update({
             where: {
                 email: requestData.email },
             data: {
-                avatar: data.url
+                avatar: url
             }
         })
-        return NextResponse.json({ avatarUrl: data.url });
+        return NextResponse.json({ avatarUrl: url });
     } catch (error) {
         return NextResponse.json({ error: "Failed to update user avatar." }, { status: 400 });
     }

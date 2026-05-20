@@ -1,4 +1,4 @@
-import { Body, Head, Html, Img, Preview, Tailwind, Text } from "@react-email/components";
+import { Body, Head, Html, Img, Preview, Tailwind, Text } from "react-email";
 
 export default function VerificationOTP(otp: string = "ABO2C3") {
     if (!otp.length || otp?.length !== 6) otp = "ABO2C3";
