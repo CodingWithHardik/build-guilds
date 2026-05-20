@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import "./globals.css";
 import { UserProvider } from "@/context/user-context";
 import { redirect } from "next/navigation";
-import { headers } from "next/headers";
+import { headers, cookies } from "next/headers";
 import { getUsers } from "@/lib/functions/users/getUsers";
 import { getEvents } from "@/lib/functions/events/getEvents";
 
@@ -21,12 +21,14 @@ export default async function RootLayout({
   let eventsData: { id: string; eventName: string; slug: string; description: string; startDate: Date; endDate: Date; logo: string }[] | null = null;
   const headerlist = await headers();
   const pathname = headerlist.get("x-pathname") || headerlist.get("x-next-pathname") || "/";
+  const cookiestore = await cookies();
+  const csrfToken = cookiestore.get("csrf_token")?.value ?? "";
   if (!pathname.startsWith("/auth")) {
     const host = headerlist.get("host");
     const cookie = headerlist.get("cookie") ?? undefined;
     const protocol = process.env.NODE_ENV === "production" ? "https" : "http";
-    const data = await getUsers(protocol, host!, String(cookie));
-    const eventsDataResponse = await getEvents(protocol, host!, String(cookie));
+    const data = await getUsers(protocol, host!, String(cookie), csrfToken);
+    const eventsDataResponse = await getEvents(protocol, host!, String(cookie), csrfToken);
     if (!data?.ok || data?.status === 401) {
      redirect("/auth/login?logout=1");
     };
@@ -58,7 +60,7 @@ export default async function RootLayout({
         {pathname.startsWith("/auth") ? (
           children
         ) : (
-          <UserProvider userdata={{ email: userData?.email!, name: userData?.name!, avatar: userData?.avatar! }} eventsData={eventsData?.map(
+          <UserProvider csrfTokenGet={csrfToken} userdata={{ email: userData?.email!, name: userData?.name!, avatar: userData?.avatar! }} eventsData={eventsData?.map(
             (items) => ({
               eventId: items.id,
               eventName: items.eventName,

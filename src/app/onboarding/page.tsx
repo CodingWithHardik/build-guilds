@@ -27,6 +27,7 @@ export default function Onboarding() {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
+                "x-csrf-token": ctx?.csrfToken || "",
             },
             body: JSON.stringify({ name }),
         })

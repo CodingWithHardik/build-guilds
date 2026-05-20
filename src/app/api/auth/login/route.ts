@@ -4,6 +4,7 @@ import { safeEqualString } from "../../../../../lib/secureCompare";
 import { cookies } from 'next/headers'
 import { NextRequest } from "next/server";
 import { prisma } from "@/lib/prisma";
+import { generateCsrfToken } from "@/lib/csrf";
 
 export async function POST(request: NextRequest) {
     const { email, otp } = await request.json();
@@ -31,7 +32,9 @@ export async function POST(request: NextRequest) {
         }
 
     })
-    const token = generateToken(emailfilter);
+    const getcsrf = generateCsrfToken();
+    if (!getcsrf.success) return new Response(JSON.stringify({ error: "Internal Server Error" }), { status: 500 });
+    const token = generateToken(emailfilter, getcsrf.id);
     if (!token) return new Response(JSON.stringify({ error: "Internal Server Error" }), { status: 500 });
     if (typeof token === "object" && token !== null && "code" in token && token.code === 404) return new Response(JSON.stringify({ error: "Internal Server Error" }), { status: 500 });
     if (typeof token === "object" && token !== null && "code" in token && token.code === 200) return new Response(JSON.stringify({ error: "Invalid Email" }), { status: 200 });
@@ -40,7 +43,8 @@ export async function POST(request: NextRequest) {
         const forwardedProto = request.headers.get("x-forwarded-proto");
         const secureFlag = process.env.FORCE_SECURE === "1" || forwardedProto === "https" || process.env.NODE_ENV === "production";
         cookieStore.set("token", token.token as string, { path: "/", httpOnly: true, secure: secureFlag, sameSite: "strict", maxAge: 60 * 60 * 24 * 2 });
-        return new Response(JSON.stringify({ token: token.token, isNew: isNew, name: getData?.name || null, email: getData?.email || null, avatar: getData?.avatar || null }), { status: 202 });
+        cookieStore.set("csrf_token", getcsrf.token, { path: "/", httpOnly: false, secure: secureFlag, sameSite: "strict", maxAge: 60 * 60 * 24 * 2 });
+        return new Response(JSON.stringify({ token: token.token, isNew: isNew, name: getData?.name || null, email: getData?.email || null, avatar: getData?.avatar || null }), { status: 202, headers: { "x-csrf-token": getcsrf.token } })
     }
     return new Response(JSON.stringify({ error: "Internal Server Error" }), { status: 500 });
 }

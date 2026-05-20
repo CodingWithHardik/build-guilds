@@ -1,12 +1,13 @@
 import { cache } from "react";
 
 
-export const getUsers = cache(async(protocol: string, host: string = "localhost", cookie: string) => {
+export const getUsers = cache(async(protocol: string, host: string = "localhost", cookie: string, csrfToken: string) => {
     return await fetch(`${protocol}://${host}/api/user/details`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          "Cookie": cookie
+          "Cookie": cookie,
+          "x-csrf-token": csrfToken
         }
     })
 })

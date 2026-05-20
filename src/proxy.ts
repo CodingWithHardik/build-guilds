@@ -21,7 +21,7 @@ export async function proxy(request: NextRequest) {
     if (!token)
       return NextResponse.redirect(new URL("/auth/login", request.url));
     if (token) {
-      const verify = verifyToken(token);
+      const verify = verifyToken(token, false);
       if (!(verify as any).success) {
         const response = NextResponse.redirect(
           new URL("/auth/login", request.url),
@@ -49,7 +49,8 @@ export async function proxy(request: NextRequest) {
     }
     const token = request.cookies.get("token")?.value;
     if (token) {
-      const verify = verifyToken(token);
+      const csrf = baseHeaders.get("x-csrf-token") || "";
+      const verify = verifyToken(token, false);
       if ((verify as any).success) {
         const redirectDash = NextResponse.redirect(
           new URL("/dashboard", request.url),
@@ -110,7 +111,7 @@ export async function proxy(request: NextRequest) {
   const cookietoken = request.cookies.get("token")?.value;
   if (!cookietoken)
     return NextResponse.redirect(new URL("/auth/login", request.url));
-  const verifycookie = verifyToken(cookietoken);
+  const verifycookie = verifyToken(cookietoken, false);
   if (!(verifycookie as any).success) {
     const response = NextResponse.redirect(new URL("/auth/login", request.url));
     response.cookies.delete("token");

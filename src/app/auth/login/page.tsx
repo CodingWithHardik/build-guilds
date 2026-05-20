@@ -3,7 +3,6 @@ import ShapeGrid from "@/components/ShapeGrid";
 import { Button } from "@/components/ui/button";
 import {
   Card,
-  CardAction,
   CardContent,
   CardDescription,
   CardFooter,
@@ -14,7 +13,6 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import Image from "next/image";
 import React, { useContext } from "react";
-import { redirect } from "next/navigation";
 import { UserContext } from "@/context/user-context";
 
 export default function Login() {
@@ -103,10 +101,12 @@ export default function Login() {
           avatar: response.avatar,
         });
         if (!response.isNew) {
+          const csrf = responseAPI.headers.get("x-csrf-token") || "";
           const eventresponse = await fetch("/api/events/getEvents", {
             method: "POST",
             headers: {
               "Content-Type": "application/json",
+              "x-csrf-token": csrf
             },
           });
           const eventData = await eventresponse.json();
@@ -121,6 +121,7 @@ export default function Login() {
           }));
           ctx?.setEvents(data);
         }
+        localStorage.clear()
         if (response.isNew) window.location.assign("/onboarding");
         else window.location.assign("/");
       }

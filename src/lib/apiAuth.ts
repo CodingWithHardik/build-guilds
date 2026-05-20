@@ -8,12 +8,14 @@ export function apiAuth(
     handler: (request: NextRequest) => Promise<NextResponse>
 ) {
     return async (request: NextRequest) => {
-        const token = request.headers.get("Authorization")?.replace("Bearer ", "");
-        const tokensecond = request.cookies.get("token")?.value;
-        if (!token && !tokensecond) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-        if (!safeEqualString(token, tokensecond)) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-        const tokenvalidation = verifyToken(String(token))
-        const tokendata = (tokenvalidation as { code: number, success: boolean, email: string })
+        const headerToken = request.headers.get("Authorization")?.replace("Bearer ", "");
+        const cookieToken = request.cookies.get("token")?.value;
+        if (!headerToken && !cookieToken) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+        if (headerToken && cookieToken && !safeEqualString(headerToken, cookieToken)) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+        const token = headerToken || cookieToken || "";
+        const headers = new Headers(request.headers);
+        const csrfToken = headers.get("x-csrf-token") || "";
+        const tokendata = verifyToken(String(token), true, csrfToken)
         if (!tokendata.success) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
         if (!tokendata.email) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
         const user = await prisma.user.findUnique({

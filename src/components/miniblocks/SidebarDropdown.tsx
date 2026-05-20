@@ -84,12 +84,13 @@ export default function SideBarMenuDropdown({
             method: "POST",
             headers: {
               "Content-Type": "application/json",
+              "x-csrf-token": ctx?.csrfToken || "",
             },
             body: JSON.stringify({
               eventId: ctx?.events[Number(id) - 1]?.eventId || "",
             }),
           });
-          
+
           const cityjs = await cityget.json();
           const citydetails = cityjs.map((city: any) => ({
             id: city.id,
@@ -105,11 +106,11 @@ export default function SideBarMenuDropdown({
             eventSponsors: city.details.eventSponsors,
           }));
           ctx?.setCity(citydetails || []);
-          ctx?.setIsSelected(true)
+          ctx?.setIsSelected(true);
         };
         if (ctx?.events.length === 0) {
           ctx?.setCity([]);
-          ctx?.setIsSelected(true)
+          ctx?.setIsSelected(true);
         } else {
           city(Number(selectedEvent));
         }
@@ -119,13 +120,14 @@ export default function SideBarMenuDropdown({
   }, [ctx?.user?.email]);
   const handleSelectEvent = (id: number) => {
     setEvent(id);
-    ctx?.setIsSelected(false)
+    ctx?.setIsSelected(false);
     const city = async (id: number) => {
       if (id === 0) return;
       const cityget = await fetch(`/api/city/getCity`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
+          "x-csrf-token": ctx?.csrfToken || "",
         },
         body: JSON.stringify({
           eventId: ctx?.events[Number(id) - 1]?.eventId || "",
@@ -161,7 +163,7 @@ export default function SideBarMenuDropdown({
   const handlepopover = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setLoading(true);
-    
+
     if (error && String(error)?.length > 1) {
       setLoading(false);
       return;
@@ -193,6 +195,7 @@ export default function SideBarMenuDropdown({
       method: "POST",
       headers: {
         "Content-Type": "application/json",
+        "x-csrf-token": ctx?.csrfToken || "",
       },
       body: JSON.stringify({
         name: data.name,
@@ -271,6 +274,7 @@ export default function SideBarMenuDropdown({
         method: "POST",
         headers: {
           "Content-Type": "application/json",
+          "x-csrf-token": ctx?.csrfToken || "",
         },
         body: JSON.stringify({ slug: debouncedUsername.toLowerCase() }),
       });

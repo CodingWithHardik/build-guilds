@@ -55,6 +55,8 @@ type UserContextType = {
   setCity: (data: CityData[]) => void;
   isSelected: Boolean;
   setIsSelected: (data: Boolean) => void;
+  csrfToken: string;
+  setCsrfToken: (data: string) => void;
 };
 
 export const UserContext = createContext<UserContextType | null>(null);
@@ -63,18 +65,21 @@ export function UserProvider({
   children,
   userdata,
   eventsData,
+  csrfTokenGet,
 }: {
   children: React.ReactNode;
   userdata: UserData;
   eventsData?: EventData[];
+  csrfTokenGet?: string;
 }) {
   const [user, setUser] = useState<UserData | null>(userdata);
   const [events, setEvents] = useState<EventData[]>(eventsData || []);
   const [selectedEvent, setSelectedEvent] = useState<Number>(0);
   const [city, setCity] = useState<CityData[] | []>([]);
   const [isSelected, setIsSelected] = useState<Boolean>(false);
+  const [csrfToken, setCsrfToken] = useState<string>(csrfTokenGet || "");
   return (
-    <UserContext.Provider value={{ user, setUser, events, setEvents, selectedEvent, setSelectedEvent, city, setCity, isSelected, setIsSelected }}>
+    <UserContext.Provider value={{ user, setUser, events, setEvents, selectedEvent, setSelectedEvent, city, setCity, isSelected, setIsSelected, csrfToken, setCsrfToken }}>
       {children}
     </UserContext.Provider>
   );

@@ -37,6 +37,9 @@ export default function SettingsPage() {
     formData.append(`file`, file);
     const res = await fetch("/api/user/uploadAvatar", {
       method: "POST",
+      headers: {
+        "x-csrf-token": ctx?.csrfToken || "",
+      },
       body: formData,
     });
     try {
@@ -80,6 +83,7 @@ export default function SettingsPage() {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
+        "x-csrf-token": ctx?.csrfToken || "",
       },
       body: JSON.stringify({ name }),
     });
