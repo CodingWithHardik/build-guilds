@@ -32,8 +32,9 @@ export async function POST(request: NextRequest) {
         crypto.randomInt(0, "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ".length)
       ],
   ).join("");
-  const set = await redis.set(`otp:${emailfilter}`, otp, "EX", 60 * 10, "NX");
-  const finalOtp = set ? otp : (await redis.get(`otp:${emailfilter}`) ?? otp);
+  const existingOtp = await redis.get(`otp:${emailfilter}`);
+  await redis.set(`otp:${emailfilter}`, otp, "EX", 60 * 10, "NX");
+  const finalOtp = existingOtp ? existingOtp : otp;
   const emailHtml = await render(VerificationOTP(finalOtp));
   const emailTransporter = getEmailTransporter();
   await emailTransporter.sendMail({
