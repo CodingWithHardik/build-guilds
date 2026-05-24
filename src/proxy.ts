@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 import { verifyToken } from "../lib/auth";
 import { getRedis } from "../lib/redis";
+import crypto from "crypto";
 
 export async function proxy(request: NextRequest) {
   const pathList = ["/favicon.ico", "/_next"];
@@ -77,15 +78,18 @@ export async function proxy(request: NextRequest) {
   if (path.startsWith("/api/auth/")) {
     const redis = getRedis();
     const ip = request.headers.get("x-forwarded-for") || "unknown";
-    const current = Number((await redis.get(`limit:${path}:${ip}`)) ?? 0);
-    if (current >= 100) {
+    const userAgent = request.headers.get("user-agent") || "unknown";
+    const acceptedLanguage = request.headers.get("accept-language") || "unknown";
+    const uniqueId = crypto.createHash("sha256").update(`${ip}:${userAgent}:${acceptedLanguage}`).digest("hex");
+    const current = Number((await redis.get(`limit:${path}:${uniqueId}`)) ?? 0);
+    if (current >= 50) {
       return new Response(JSON.stringify({ error: "Too many requests" }), {
         status: 429,
       });
     }
-    const newCount = await redis.incr(`limit:${path}:${ip}`);
+    const newCount = await redis.incr(`limit:${path}:${uniqueId}`);
     if (newCount === 1) {
-      await redis.expire(`limit:${path}:${ip}`, 600);
+      await redis.expire(`limit:${path}:${uniqueId}`, 600);
     }
     return NextResponse.next({
       request: {
