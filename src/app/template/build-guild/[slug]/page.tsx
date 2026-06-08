@@ -16,6 +16,7 @@ import { Badge } from "@/components/ui/badge";
 import { Calendar1Icon, CheckCircle2Icon, StarIcon } from "lucide-react";
 import { Footer } from "@/blocks/Footer";
 import { notFound } from "next/navigation";
+import { sanitizeHref, sanitizeInput } from "@/lib/functions/sanitization";
 
 export default function CityPage({
   params,
@@ -55,7 +56,7 @@ export default function CityPage({
         role: "Head Organizer",
         bio: "I am a developer",
         imageUrl: "https://avatars.githubusercontent.com/u/113587014?v=4",
-        slackUrl: "https://hackclub.enterprise.slack.com/team/U07GXEVL48P",
+        slackUrl: "U07GXEVL48P",
       },
     ],
     faqs: [
@@ -79,10 +80,10 @@ export default function CityPage({
         ...prev,
         city: parsed.name || prev.city,
         dateTime: validDate ? validDate.toISOString() : prev.dateTime,
-        country: parsed.location || prev.country,
-        venue: parsed.venue || prev.venue,
-        signupLink: parsed.signuplink || prev.signupLink,
-        slackUrl: parsed.slackChannel || prev.slackUrl,
+        country: sanitizeInput(parsed.location) || prev.country,
+        venue: sanitizeInput(parsed.venue) || prev.venue,
+        signupLink: sanitizeHref(parsed.signuplink, {fallback: prev.signupLink, onlyEndWithHref: false}) || prev.signupLink,
+        slackUrl: sanitizeHref(parsed.slackChannel) || prev.slackUrl,
       }));
     }
   }, []);
@@ -200,7 +201,7 @@ const year = eventDate.getUTCFullYear();
               variant="outline"
               className="px-6 text-lg font-bold rounded-none text-gray-200 hover:bg-image-contrast/10"
             >
-              <a href={data.slackUrl} aria-label="Slack">
+              <a href={`https://hackclub.enterprise.slack.com/team/${data.slackUrl}`} aria-label="Slack">
                 Join Slack
               </a>
             </Button>
@@ -209,7 +210,7 @@ const year = eventDate.getUTCFullYear();
       </div>
       <Footer
         registerUrl={data.signupLink}
-        slackUrl={data.slackUrl}
+        slackUrl={`https://hackclub.enterprise.slack.com/team/${data.slackUrl}`}
         email={data.email}
       />
     </>

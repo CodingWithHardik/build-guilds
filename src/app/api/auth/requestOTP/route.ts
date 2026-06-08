@@ -5,16 +5,16 @@ import nodemailer from "nodemailer";
 import { getEmailTransporter } from "../../../../../lib/mailer";
 import { getRedis } from "../../../../../lib/redis";
 import { NextRequest } from "next/server";
+import { sanitizeInput } from "@/lib/functions/sanitization";
 
 export async function POST(request: NextRequest) {
   const { email } = await request.json();
-
-  if (!email || typeof email !== "string")
+  const emailfilter = sanitizeInput(email);
+  if (!emailfilter || typeof emailfilter !== "string")
     return new Response(JSON.stringify({ error: "Email is required" }), {
       status: 400,
     });
   const redis = getRedis();
-  const emailfilter = email.toLowerCase().trim();
   const current = Number((await redis.get(`limit:otp:${emailfilter}`)) ?? 0);
   if (current >= 10) {
     return new Response(JSON.stringify({ error: "Too many otp requests" }), {

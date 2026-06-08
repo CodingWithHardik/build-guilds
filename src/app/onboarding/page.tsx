@@ -8,6 +8,7 @@ import { ArrowRight } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useContext, useState } from "react";
 import config from "../../../config.json";
+import { sanitizeHref, sanitizeInput } from "@/lib/functions/sanitization";
 
 export default function Onboarding() { 
     const [name, setName] = useState("");
@@ -29,7 +30,7 @@ export default function Onboarding() {
                 "Content-Type": "application/json",
                 "x-csrf-token": ctx?.csrfToken || "",
             },
-            body: JSON.stringify({ name }),
+            body: JSON.stringify({ name: sanitizeInput(name) }),
         })
         if (!res.ok || res.status === 500) {
             setLoading(false);
@@ -53,7 +54,7 @@ export default function Onboarding() {
             setError("Something went wrong. Please try again.");
             return;
         };
-        ctx.setUser({ name: name, email: email, avatar: ctx?.user?.avatar || config.defaultAvatar });
+        ctx.setUser({ name: sanitizeInput(name), email: sanitizeInput(email, { lowercase: true }), avatar: sanitizeHref(ctx?.user?.avatar || config.defaultAvatar, { fallback: "https://cdn.hackclub.com/019dde90-52b7-7dcc-8e6a-cf679d66a4aa/Untitled%20design-5.png", onlyEndWithHref: false, allowedDomain: "cdn.hackclub.com" }) });
         router.push("/");
     }
     return (
@@ -74,7 +75,7 @@ export default function Onboarding() {
                             placeholder="Your name" 
                             className="w-full rounded-md border border-gray-500 px-3 py-2 focus:outline-none bg-white/10 placeholder:text-white text-white" 
                             value={name}
-                            onChange={(e) => setName(e.target.value)}
+                            onChange={(e) => setName(sanitizeInput(e.target.value))}
                         />
                     </div>
                     </form>

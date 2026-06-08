@@ -1,4 +1,5 @@
 import { apiAuth } from "@/lib/apiAuth";
+import { sanitizeInput } from "@/lib/functions/sanitization";
 import { prisma } from "@/lib/prisma";
 import { requestDataStorage } from "@/lib/requestData";
 import { NextResponse, type NextRequest } from "next/server";
@@ -14,7 +15,8 @@ export const POST = apiAuth(async (request: NextRequest) => {
       { status: 400 },
     );
   const { name } = await request.json();
-  if (!name || typeof name !== "string" || name.length < 3)
+  const nameFilter = sanitizeInput(name);
+  if (!nameFilter || typeof nameFilter !== "string" || nameFilter.length < 3)
     return NextResponse.json(
       { error: "Name must be at least 3 characters long" },
       { status: 400 },
@@ -25,7 +27,7 @@ export const POST = apiAuth(async (request: NextRequest) => {
         email: requestData.email,
       },
       data: {
-        name: name,
+        name: nameFilter,
       },
     });
   } catch (e) {
@@ -36,7 +38,7 @@ export const POST = apiAuth(async (request: NextRequest) => {
   }
   return NextResponse.json({
     email: requestData.email,
-    name: name,
+    name: nameFilter,
     isNew,
   });
 });

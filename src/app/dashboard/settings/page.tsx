@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { Input } from "@base-ui/react";
 import { LockIcon, UnlockIcon } from "lucide-react";
+import { sanitizeHref, sanitizeInput } from "@/lib/functions/sanitization";
 
 export default function SettingsPage() {
   const ctx = useContext(UserContext);
@@ -48,7 +49,7 @@ export default function SettingsPage() {
         setError("Failed to upload avatar.");
       }
       if (res.status === 400) {
-        setError(data.error || "Failed to upload avatar.");
+        setError(sanitizeInput(data.error) || "Failed to upload avatar.");
       }
       if (res.status === 200) {
         if (!data.avatarUrl) {
@@ -57,9 +58,9 @@ export default function SettingsPage() {
         }
         setSuccess(true);
         ctx?.setUser({
-          avatar: data.avatarUrl,
-          email: ctx.user?.email || "",
-          name: ctx.user?.name || "",
+          avatar: sanitizeHref(data.avatarUrl, { fallback: "https://cdn.hackclub.com/019dde90-52b7-7dcc-8e6a-cf679d66a4aa/Untitled%20design-5.png", onlyEndWithHref: false, allowedDomain: "cdn.hackclub.com" }),
+          email: sanitizeInput(ctx.user?.email || "", { lowercase: true }),
+          name: sanitizeInput(ctx.user?.name || ""),
         });
         setTimeout(() => {
           setSuccess(false);
@@ -85,20 +86,20 @@ export default function SettingsPage() {
         "Content-Type": "application/json",
         "x-csrf-token": ctx?.csrfToken || "",
       },
-      body: JSON.stringify({ name }),
+      body: JSON.stringify({ name: sanitizeInput(name) }),
     });
     if (!res.ok || res.status === 401) {
       setDetailsError("Failed to update name.");
     }
     if (res.status === 400) {
       const data = await res.json();
-      setDetailsError(data.error || "Failed to update name.");
+      setDetailsError(sanitizeInput(data.error) || "Failed to update name.");
     }
     if (res.status === 200) {
       ctx?.setUser({
-        avatar: ctx.user?.avatar || "",
-        email: ctx.user?.email || "",
-        name,
+        avatar: sanitizeHref(ctx.user?.avatar || "", { fallback: "https://cdn.hackclub.com/019dde90-52b7-7dcc-8e6a-cf679d66a4aa/Untitled%20design-5.png", onlyEndWithHref: false, allowedDomain: "cdn.hackclub.com" }),
+        email: sanitizeInput(ctx.user?.email || "", { lowercase: true }),
+        name: sanitizeInput(name),
       });
       setSaveDetails(false);
       setDetailsSuccess(true);
@@ -206,7 +207,7 @@ export default function SettingsPage() {
           <div className="relative w-full">
             <Input
               value={name || ""}
-              onChange={(e) => setName(e.target.value)}
+              onChange={(e) => setName(sanitizeInput(e.target.value))}
               className="w-full bg-[#0b3869]/50 text-gray-400 border border-[#0b3869] rounded-md pr-10 p-2 px-4"
             />
             <UnlockIcon className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4 pointer-events-none" />

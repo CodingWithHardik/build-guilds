@@ -12,17 +12,18 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import Image from "next/image";
-import React, { useContext } from "react";
+import React, { useContext, useState } from "react";
 import { UserContext } from "@/context/user-context";
+import { sanitizeHref, sanitizeInput } from "@/lib/functions/sanitization";
 
 export default function Login() {
   const ctx = useContext(UserContext);
-  const [isLoading, setIsLoading] = React.useState(false);
-  const [email, setEmail] = React.useState("");
-  const [otp, setOTP] = React.useState("");
-  const [error, setError] = React.useState("");
-  const [success, setSuccess] = React.useState("");
-  const [isSecondStep, setIsSecondStep] = React.useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+  const [email, setEmail] = useState("");
+  const [otp, setOTP] = useState("");
+  const [error, setError] = useState("");
+  const [success, setSuccess] = useState("");
+  const [isSecondStep, setIsSecondStep] = useState(false);
   const onSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
@@ -35,7 +36,7 @@ export default function Login() {
           headers: {
             "Content-Type": "application/json",
           },
-          body: JSON.stringify({ email }),
+          body: JSON.stringify({ email: sanitizeInput(email, { lowercase: true }) }),
         });
         if (responseAPI.status === 429)
           return setError("Too many requests. Please try again later.");
@@ -71,7 +72,7 @@ export default function Login() {
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ email, otp }),
+        body: JSON.stringify({ email: sanitizeInput(email, { lowercase: true }), otp: sanitizeInput(otp, {lowercase: true, maxLength: 6}).toUpperCase() }),
       });
       const response = await responseAPI.json();
       if (responseAPI.status === 429) {
@@ -83,7 +84,7 @@ export default function Login() {
       if (responseAPI.status === 200) {
         setOTP("");
         setIsLoading(false);
-        setError(response.error);
+        setError(sanitizeInput(response.error));
         return;
       }
       if (responseAPI.status === 500) {
@@ -96,9 +97,9 @@ export default function Login() {
         setError("");
         setSuccess("Logged in successfully. Redirecting...");
         ctx?.setUser({
-          name: response.name,
-          email: response.email,
-          avatar: response.avatar,
+          name: sanitizeInput(response.name),
+          email: sanitizeInput(response.email, { lowercase: true }),
+          avatar: sanitizeHref(response.avatar, { fallback: "https://cdn.hackclub.com/019dde90-52b7-7dcc-8e6a-cf679d66a4aa/Untitled%20design-5.png", onlyEndWithHref: false, allowedDomain: "cdn.hackclub.com" }),
         });
         if (!response.isNew) {
           const csrf = responseAPI.headers.get("x-csrf-token") || "";
@@ -112,12 +113,12 @@ export default function Login() {
           const eventData = await eventresponse.json();
           const data = eventData.map((event: any, index: number) => ({
             eventId: event.id,
-            eventName: event.eventName,
-            eventslug: event.slug,
-            description: event.description,
-            logo: event.logo,
-            startDate: event.startDate,
-            endDate: event.endDate,
+            eventName: sanitizeInput(event.eventName),
+            eventslug: sanitizeInput(event.slug, { lowercase: true }),
+            description: sanitizeInput(event.description, { preserveNewLines: true }),
+            logo: sanitizeHref(event.logo, { fallback: "https://cdn.hackclub.com/019ddd5e-2595-7627-a954-bcf0336fc9c6/Untitled%20design-2.png", onlyEndWithHref: false, allowedDomain: "cdn.hackclub.com" }),
+            startDate: new Date(event.startDate),
+            endDate: new Date(event.endDate),
           }));
           ctx?.setEvents(data);
         }
@@ -172,7 +173,7 @@ export default function Login() {
                       id="email"
                       type="text"
                       placeholder="hardik@example.com"
-                      onChange={(e) => setEmail(`${e.target.value}`)}
+                      onChange={(e) => setEmail(sanitizeInput(e.target.value, {lowercase: true}))}
                       required
                       maxLength={30}
                       className="bg-[#071d35]/10 text-white placeholder:text-gray-500 border-0 focus-visible:ring-0 focus:ring-offset-0 rounded-none flex-1 min-w-0"
@@ -195,7 +196,7 @@ export default function Login() {
                           .replace(/\s/g, "")
                           .toUpperCase()
                           .slice(0, 6);
-                        setOTP(value);
+                        setOTP(sanitizeInput(value, {lowercase: true, maxLength: 6}).toUpperCase());
                         setTimeout(() => {
                           e.preventDefault();
                         }, 0);
@@ -205,7 +206,7 @@ export default function Login() {
                           .replace(/\s/g, "")
                           .toUpperCase();
                         value = value.slice(0, 6);
-                        setOTP(value);
+                        setOTP(sanitizeInput(value, {lowercase: true, maxLength: 6}).toUpperCase());
                       }}
                       required
                       maxLength={12}

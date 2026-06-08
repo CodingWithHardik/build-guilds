@@ -1,5 +1,6 @@
 "use client";
 import { Label } from "@/components/ui/label";
+import { sanitizeInput } from "@/lib/functions/sanitization";
 import { Input } from "@base-ui/react";
 import { UnlockIcon } from "lucide-react";
 import { useState } from "react";
@@ -19,7 +20,7 @@ export default function Plan() {
         <div className="relative w-full">
           <Input
             value={data.time}
-            onChange={(e) => setData({ ...data, time: e.target.value })}
+            onChange={(e) => setData({ ...data, time: new Date(e.target.value).toString() })}
             className="w-full bg-[#0b3869]/50 text-gray-400 border border-[#0b3869] rounded-md pr-10 p-2 px-4"
           />
           <UnlockIcon className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4 pointer-events-none" />
@@ -32,7 +33,7 @@ export default function Plan() {
         <div className="relative w-full">
           <Input
             value={data.title}
-            onChange={(e) => setData({ ...data, title: e.target.value })}
+            onChange={(e) => setData({ ...data, title: sanitizeInput(e.target.value) })}
             className="w-full bg-[#0b3869]/50 text-gray-400 border border-[#0b3869] rounded-md pr-10 p-2 px-4"
           />
           <UnlockIcon className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4 pointer-events-none" />
@@ -45,7 +46,7 @@ export default function Plan() {
         <div className="relative w-full">
           <Input
             value={data.description}
-            onChange={(e) => setData({ ...data, description: e.target.value })}
+            onChange={(e) => setData({ ...data, description: sanitizeInput(e.target.value, {preserveNewLines: true}) })}
             className="w-full bg-[#0b3869]/50 text-gray-400 border border-[#0b3869] rounded-md pr-10 p-2 px-4"
           />
           <UnlockIcon className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4 pointer-events-none" />

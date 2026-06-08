@@ -28,6 +28,7 @@ import { cn } from "@/lib/utils";
 import { Textarea } from "../ui/textarea";
 import { UserContext } from "@/context/user-context";
 import config from "../../../config.json";
+import { sanitizeHref, sanitizeInput } from "@/lib/functions/sanitization";
 
 export default function SideBarMenuDropdown({
   events,
@@ -94,16 +95,37 @@ export default function SideBarMenuDropdown({
           const cityjs = await cityget.json();
           const citydetails = cityjs.map((city: any) => ({
             id: city.id,
-            slug: city.cityslug,
-            name: city.details.name,
-            date: city.details.date,
-            location: city.details.location,
-            venue: city.details.venue,
-            signuplink: city.details.signuplink,
-            slackChannel: city.details.slackChannel,
-            domain: city.details.domain,
-            eventPlan: city.details.eventPlan,
-            eventSponsors: city.details.eventSponsors,
+            slug: sanitizeInput(city.cityslug, { lowercase: true }),
+            name: sanitizeInput(city.details.name),
+            date: new Date(city.details.date),
+            location: sanitizeInput(city.details.location),
+            venue: sanitizeInput(city.details.venue),
+            signuplink: sanitizeHref(city.details.signuplink, {
+              fallback: "https://buildguild.tech/",
+              onlyEndWithHref: false,
+            }),
+            slackChannel: sanitizeInput(city.details.slackChannel),
+            domain: {
+              name: sanitizeInput(city.details.domain.name),
+              expiryDate: new Date(city.details.domain.expiryDate),
+              verificationToken: sanitizeInput(
+                city.details.domain.verificationToken,
+              ),
+              verified: city.details.domain.verified,
+            },
+            eventPlan: city.details.eventPlan.map((value: any) => ({
+              title: sanitizeInput(value.title),
+              description: sanitizeInput(value.description),
+              endTime: new Date(value.endTime),
+              startTime: new Date(value.startTime),
+            })),
+            eventSponsors: city.details.eventSponsors.map((value: any) => ({
+              logo: sanitizeHref(value.logo, {
+                fallback: "https://assets.hackclub.com/icon-rounded.svg",
+                onlyEndWithHref: false,
+              }),
+              name: sanitizeInput(value.name),
+            })),
           }));
           ctx?.setCity(citydetails || []);
           ctx?.setIsSelected(true);
@@ -114,12 +136,12 @@ export default function SideBarMenuDropdown({
         } else {
           city(Number(selectedEvent));
         }
-        setEvent(Number(selectedEvent));
+        setEvent(Number(sanitizeInput(selectedEvent)));
       }
     }
   }, [ctx?.user?.email]);
   const handleSelectEvent = (id: number) => {
-    setEvent(id);
+    setEvent(Number(sanitizeInput(id.toString())));
     ctx?.setIsSelected(false);
     const city = async (id: number) => {
       if (id === 0) return;
@@ -136,16 +158,37 @@ export default function SideBarMenuDropdown({
       const cityjs = await cityget.json();
       const citydetails = cityjs.map((city: any) => ({
         id: city.id,
-        slug: city.cityslug,
-        name: city.details.name,
-        date: city.details.date,
-        location: city.details.location,
-        venue: city.details.venue,
-        signuplink: city.details.signuplink,
-        slackChannel: city.details.slackChannel,
-        domain: city.details.domain,
-        eventPlan: city.details.eventPlan,
-        eventSponsors: city.details.eventSponsors,
+        slug: sanitizeInput(city.cityslug, { lowercase: true }),
+        name: sanitizeInput(city.details.name),
+        date: new Date(city.details.date),
+        location: sanitizeInput(city.details.location),
+        venue: sanitizeInput(city.details.venue),
+        signuplink: sanitizeHref(city.details.signuplink, {
+          fallback: "https://buildguild.tech/",
+          onlyEndWithHref: false,
+        }),
+        slackChannel: sanitizeInput(city.details.slackChannel),
+        domain: {
+          name: sanitizeInput(city.details.domain.name),
+          expiryDate: new Date(city.details.domain.expiryDate),
+          verificationToken: sanitizeInput(
+            city.details.domain.verificationToken,
+          ),
+          verified: city.details.domain.verified,
+        },
+        eventPlan: city.details.eventPlan.map((value: any) => ({
+          title: sanitizeInput(value.title),
+          description: sanitizeInput(value.description),
+          endTime: new Date(value.endTime),
+          startTime: new Date(value.startTime),
+        })),
+        eventSponsors: city.details.eventSponsors.map((value: any) => ({
+          logo: sanitizeHref(value.logo, {
+            fallback: "https://assets.hackclub.com/icon-rounded.svg",
+            onlyEndWithHref: false,
+          }),
+          name: sanitizeInput(value.name),
+        })),
       }));
       ctx?.setCity(citydetails || []);
       ctx?.setIsSelected(true);
@@ -154,10 +197,10 @@ export default function SideBarMenuDropdown({
       ctx?.setCity([]);
       ctx?.setIsSelected(true);
     } else {
-      city(id);
+      city(Number(id));
     }
     localStorage.setItem(`${ctx?.user?.email}_selectedEvent`, String(id));
-    ctx?.setSelectedEvent(id);
+    ctx?.setSelectedEvent(Number(id));
   };
 
   const handlepopover = async (e: React.FormEvent<HTMLFormElement>) => {
@@ -198,13 +241,13 @@ export default function SideBarMenuDropdown({
         "x-csrf-token": ctx?.csrfToken || "",
       },
       body: JSON.stringify({
-        name: data.name,
-        slug: data.username,
-        description: data.description,
-        logo: data.logo,
-        startDate: startDate,
-        endDate: endDate,
-        emailSlug: data.emailSlug,
+        name: sanitizeInput(data.name),
+        slug: sanitizeInput(data.username, {lowercase: true}),
+        description: sanitizeInput(data.description, {preserveNewLines: true}),
+        logo: sanitizeHref(data.logo, { allowedDomain: "cdn.hackclub.com", onlyEndWithHref: false, fallback: config.eventLogo }),
+        startDate: new Date(startDate),
+        endDate: new Date(endDate),
+        emailSlug: sanitizeInput(data.emailSlug, {lowercase: true}),
       }),
     });
     if (!res.ok) {
@@ -228,12 +271,12 @@ export default function SideBarMenuDropdown({
       ctx?.setEvents([
         {
           eventId: responseData.eventId,
-          eventName: data.name,
-          eventslug: data.username,
-          description: data.description,
-          startDate: String(data.startDate),
-          endDate: String(data.endDate),
-          logo: data.logo.length > 0 ? data.logo : config.eventLogo,
+          eventName: sanitizeInput(data.name),
+          eventslug: sanitizeInput(data.username, {lowercase: true}),
+          description: sanitizeInput(data.description, {preserveNewLines: true}),
+          startDate: new Date(data.startDate).toString(),
+          endDate: new Date(data.endDate).toString(),
+          logo: sanitizeHref(data.logo, { allowedDomain: "cdn.hackclub.com", onlyEndWithHref: false, fallback: config.eventLogo }),
         },
         ...ctx?.events,
       ]);
@@ -252,7 +295,7 @@ export default function SideBarMenuDropdown({
   };
   useEffect(() => {
     const timer = setTimeout(() => {
-      setDebouncedUsername(data.username);
+      setDebouncedUsername(sanitizeInput(data.username, {lowercase: true}));
     }, 600);
     return () => clearTimeout(timer);
   }, [data.username]);
@@ -411,7 +454,7 @@ export default function SideBarMenuDropdown({
                   placeholder="Your name"
                   className="w-full rounded-md border border-gray-500 px-3 py-2 focus:outline-none bg-white/10 placeholder:text-white text-white"
                   value={data.name}
-                  onChange={(e) => setData({ ...data, name: e.target.value })}
+                  onChange={(e) => setData({ ...data, name: sanitizeInput(e.target.value) })}
                 />
               </Field>
               <Field className="flex w-full flex-col gap-2">
@@ -425,7 +468,7 @@ export default function SideBarMenuDropdown({
                   className="w-full rounded-md border border-gray-500 px-3 py-2 focus:outline-none bg-white/10 placeholder:text-white text-white"
                   value={data.username}
                   onChange={(e) =>
-                    setData({ ...data, username: e.target.value })
+                    setData({ ...data, username: sanitizeInput(e.target.value, {lowercase: true}) })
                   }
                 />
                 {data.username.length > 0 && (
@@ -457,7 +500,7 @@ export default function SideBarMenuDropdown({
                     className="flex-1 min-w-0 px-3 py-2 bg-transparent focus:outline-none placeholder:text-white/40 text-white text-sm rounded-none border-none"
                     value={data.emailSlug}
                     onChange={(e) =>
-                      setData({ ...data, emailSlug: e.target.value })
+                      setData({ ...data, emailSlug: sanitizeInput(e.target.value, {lowercase: true}) })
                     }
                   />
                   <span className="px-3 py-2 text-white/50 text-sm select-none bg-white/5 border-l border-gray-500 whitespace-nowrap">
@@ -475,7 +518,7 @@ export default function SideBarMenuDropdown({
                   className="w-full rounded-md border border-gray-500 px-3 py-2 focus:outline-none bg-white/10 placeholder:text-white text-white "
                   value={data.description}
                   onChange={(e) =>
-                    setData({ ...data, description: e.target.value })
+                    setData({ ...data, description: sanitizeInput(e.target.value, {preserveNewLines: true}) })
                   }
                 />
               </Field>
@@ -499,8 +542,8 @@ export default function SideBarMenuDropdown({
                     <Calendar
                       mode="single"
                       selected={data.startDate}
-                      onSelect={(date) => {
-                        setData({ ...data, startDate: date });
+                      onSelect={(date: Date | undefined) => {
+                        setData({ ...data, startDate: new Date(date || "") });
                         setDatePopupOpen1(false);
                       }}
                       defaultMonth={data.startDate}
@@ -545,8 +588,8 @@ export default function SideBarMenuDropdown({
                     <Calendar
                       mode="single"
                       selected={data.endDate}
-                      onSelect={(date) => {
-                        setData({ ...data, endDate: date });
+                      onSelect={(date: Date | undefined) => {
+                        setData({ ...data, endDate: new Date(date || "") });
                         setDatePopupOpen2(false);
                       }}
                       defaultMonth={data.endDate}

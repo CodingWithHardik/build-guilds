@@ -8,6 +8,7 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
+import { sanitizeHref, sanitizeInput } from "@/lib/functions/sanitization";
 import { cn } from "@/lib/utils";
 import { format } from "date-fns";
 import { UnlockIcon } from "lucide-react";
@@ -35,7 +36,15 @@ export default function UserDetails() {
   useEffect(() => {
     const storedDetails = localStorage.getItem("previewDetails");
     if (storedDetails) {
-      setData(JSON.parse(storedDetails));
+      const parseStorage = JSON.parse(storedDetails);
+      setData({
+        name: sanitizeInput(parseStorage.name),
+        date: new Date(parseStorage.date).toString(),
+        location: sanitizeInput(parseStorage.location),
+        venue: sanitizeInput(parseStorage.venue),
+        signuplink: sanitizeHref(parseStorage.signuplink, { onlyEndWithHref: false, fallback: "https://buildguild.tech" }),
+        slackChannel: sanitizeInput(parseStorage.slackChannel),
+      });
     }
   }, []);
   const formatDate = (date: string) => {
@@ -54,7 +63,7 @@ export default function UserDetails() {
           <Input
             className="w-full bg-[#0b3869]/50 text-gray-400 border border-[#0b3869] rounded-md pr-10 p-2 px-4"
             value={data.name}
-            onChange={(e) => setData({ ...data, name: e.target.value })}
+            onChange={(e) => setData({ ...data, name: sanitizeInput(e.target.value) })}
           />
           <UnlockIcon className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4 pointer-events-none" />
         </div>
@@ -87,7 +96,7 @@ export default function UserDetails() {
                     : new Date()
                 }
                 onSelect={(date: any) => {
-                  setData({ ...data, date: date ? date.toISOString() : "" });
+                  setData({ ...data, date: new Date(date).toISOString() });
                   setDatePopupOpen1(false);
                 }}
                 className={cn("p-3 bg-[#0b3869] rounded-lg")}
@@ -120,7 +129,7 @@ export default function UserDetails() {
           <Input
             className="w-full bg-[#0b3869]/50 text-gray-400 border border-[#0b3869] rounded-md pr-10 p-2 px-4"
             value={data.location}
-            onChange={(e) => setData({ ...data, location: e.target.value })}
+            onChange={(e) => setData({ ...data, location: sanitizeInput(e.target.value) })}
           />
           <UnlockIcon className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4 pointer-events-none" />
         </div>
@@ -133,7 +142,7 @@ export default function UserDetails() {
           <Input
             className="w-full bg-[#0b3869]/50 text-gray-400 border border-[#0b3869] rounded-md pr-10 p-2 px-4"
             value={data.venue}
-            onChange={(e) => setData({ ...data, venue: e.target.value })}
+            onChange={(e) => setData({ ...data, venue: sanitizeInput(e.target.value) })}
           />
           <UnlockIcon className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4 pointer-events-none" />
         </div>
@@ -146,7 +155,7 @@ export default function UserDetails() {
           <Input
             className="w-full bg-[#0b3869]/50 text-gray-400 border border-[#0b3869] rounded-md pr-10 p-2 px-4"
             value={data.signuplink}
-            onChange={(e) => setData({ ...data, signuplink: e.target.value })}
+            onChange={(e) => setData({ ...data, signuplink: sanitizeHref(e.target.value, {fallback: "https://buildguild.tech", onlyEndWithHref: false}) })}
           />
           <UnlockIcon className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4 pointer-events-none" />
         </div>
@@ -159,7 +168,7 @@ export default function UserDetails() {
           <Input
             className="w-full bg-[#0b3869]/50 text-gray-400 border border-[#0b3869] rounded-md pr-10 p-2 px-4"
             value={data.slackChannel}
-            onChange={(e) => setData({ ...data, slackChannel: e.target.value })}
+            onChange={(e) => setData({ ...data, slackChannel: sanitizeInput(e.target.value) })}
           />
           <UnlockIcon className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4 pointer-events-none" />
         </div>

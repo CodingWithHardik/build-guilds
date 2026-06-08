@@ -5,15 +5,17 @@ import { cookies } from "next/headers";
 import { NextRequest } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { generateCsrfToken } from "@/lib/csrf";
+import { sanitizeInput } from "@/lib/functions/sanitization";
 
 export async function POST(request: NextRequest) {
   const { email, otp } = await request.json();
-  if (!email || typeof email !== "string")
+  const emailfilter = sanitizeInput(email);
+  const otpfilter = sanitizeInput(otp);
+  if (!emailfilter || typeof emailfilter !== "string")
     return new Response(JSON.stringify({ error: "Email is required" }), {
       status: 200,
     });
   const redis = getRedis();
-  const emailfilter = email.toLowerCase().trim();
   const current = Number((await redis.get(`limit:login:${emailfilter}`)) ?? 0);
   if (current >= 50) {
     return new Response(JSON.stringify({ error: "Too many login requests" }), {
@@ -25,11 +27,11 @@ export async function POST(request: NextRequest) {
     await redis.expire(`limit:login:${emailfilter}`, 86400);
   }
   let storedOtp = await redis.get(`otp:${emailfilter}`);
-  if (!otp || !otp?.length || typeof otp !== "string" || otp.length !== 6)
+  if (!otpfilter || !otpfilter?.length || typeof otpfilter !== "string" || otpfilter.length !== 6)
     return new Response(JSON.stringify({ error: "Invalid OTP" }), {
       status: 200,
     });
-  if (!safeEqualString(otp, storedOtp))
+  if (!safeEqualString(otpfilter, storedOtp))
     return new Response(JSON.stringify({ error: "Invalid OTP" }), {
       status: 200,
     });
