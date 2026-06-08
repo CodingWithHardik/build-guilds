@@ -80,39 +80,6 @@ export const POST = apiAuth(async (request: NextRequest) => {
           },
         },
       },
-      details: {
-        create: {
-          date: new Date(),
-          location: "India",
-          name: "Build Guild Kanpur45",
-          signuplink: "https://example.com",
-          slackChannel: "kd",
-          slug: `${mainslug}-city`,
-          venue: "TBD",
-          domain: {
-            create: {
-              name: `${mainslug}-city.buildguilds.com`,
-              expiryDate: new Date(),
-              verificationToken: "bla",
-              verified: true,
-            },
-          },
-          eventPlan: {
-            create: {
-              title: "js",
-              description: "ks",
-              endTime: new Date(),
-              startTime: new Date(),
-            },
-          },
-          eventSponsors: {
-            create: {
-              logo: "sl",
-              name: "bla",
-            },
-          },
-        },
-      },
     },
   });
   return NextResponse.json(
